@@ -53,5 +53,3 @@ def vigenere (plain, key, encrypt):
             ordhasil = (ordchar - ordkey)%26
             text += chr(ordhasil+65)
         return text
-
-binfile()
