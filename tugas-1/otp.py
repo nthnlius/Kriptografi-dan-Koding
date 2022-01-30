@@ -9,8 +9,8 @@ def randomtext(length):
     test = ""
     randkey = []
     for i in range (length):
-        a = chr(randrange(65,90))
-        randkey.append(chr(randrange(65,90)))
+        a = chr(randrange(65,91))
+        randkey.append(a)
         test += a
 
     with open(keyfile, mode) as f:
