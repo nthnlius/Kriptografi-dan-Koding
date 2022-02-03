@@ -75,6 +75,12 @@ class MainWindow(QMainWindow):
         self.keyfile2 = QPushButton("Download")
         self.keyfile2.clicked.connect(self.savefile)
         self.binaryfile = ''
+        self.rotor1 = QLineEdit()
+        self.rotor2 = QLineEdit()
+        self.rotor3 = QLineEdit()
+        self.displaykey = QLineEdit()
+        self.displaykey.setDisabled(True)
+
 
         
         # Buat menu beda sesuai jenis cipher
@@ -93,9 +99,6 @@ class MainWindow(QMainWindow):
 
         self.ciphertype.currentIndexChanged.connect(self.changemenus)
 
-        
-
-        # Masukkan menu ganti cipher
         layout.addWidget(self.space)
         layout.addWidget(self.label2)
         layout.addWidget(self.inputfield)
@@ -138,11 +141,33 @@ class MainWindow(QMainWindow):
         # Layout 2. Enigma Cipher
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 23, 0, 19)
+        
 
-        labelkey = QLabel("Matriks Kunci:")
-
+        labelkey = QLabel("Rotor Key:")
         layout.addWidget(labelkey)
-        # layout.addWidget(self.matriks)
+
+        layoutrotor = QHBoxLayout()
+
+        rotor1 = QVBoxLayout()
+        labelrotor1 = QLabel("Slow")
+        rotor1.addWidget(labelrotor1)
+        rotor1.addWidget(self.rotor1)
+
+        rotor2 = QVBoxLayout()
+        labelrotor2 = QLabel("Medium")
+        rotor2.addWidget(labelrotor2)
+        rotor2.addWidget(self.rotor2)
+
+        rotor3 = QVBoxLayout()
+        labelrotor3 = QLabel("Fast")
+        rotor3.addWidget(labelrotor3)
+        rotor3.addWidget(self.rotor3)
+
+        layoutrotor.addLayout(rotor1)
+        layoutrotor.addLayout(rotor2)
+        layoutrotor.addLayout(rotor3)
+
+        layout.addLayout(layoutrotor)
         layout.setAlignment(Qt.AlignTop)
         
         self.stack2.setLayout(layout)
@@ -154,8 +179,8 @@ class MainWindow(QMainWindow):
         layout.setContentsMargins(0, 32, 0, 0)
 
         labelkey = QLabel("Key:")
-
         layout.addWidget(labelkey)
+        layout.addWidget(displaykey)
         layout.addWidget(self.keyfile)
         layout.addWidget(self.keyfile2)
         layout.setAlignment(Qt.AlignTop)
@@ -209,8 +234,7 @@ class MainWindow(QMainWindow):
             output = "Enigma"
 
         elif index == 4:
-            keytext = self.key.text()
-            output = otp(inputtext, True)
+            output = otp(inputtext, True, )
             
         # Tambah space jika opsi dipilih
         if self.space.isChecked():
@@ -255,7 +279,6 @@ class MainWindow(QMainWindow):
             output = "Enigma"
 
         elif index == 4:
-            keytext = self.key.text()
             output = otp(inputtext, False)
 
         if index == 1 and isbinary:
