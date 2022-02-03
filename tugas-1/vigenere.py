@@ -1,5 +1,4 @@
 from random import randrange
-from telnetlib import ENCRYPT
 import os.path
 keyfile = "keyII4031Kirptografidankodingtapiadatypo.txt"
 mode = "w"

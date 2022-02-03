@@ -1,8 +1,6 @@
 import sys
 import random
 import os.path
-from winreg import LoadKey
-
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIntValidator
 from PyQt5.QtWidgets import (
