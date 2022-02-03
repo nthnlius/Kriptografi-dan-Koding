@@ -72,25 +72,9 @@ class MainWindow(QMainWindow):
         self.keyfile = QPushButton("Choose file")
         self.labelpath = QLabel("")
         self.keyfile.clicked.connect(self.open)
-        self.keyfile2 = QPushButton("Upload")
+        self.keyfile2 = QPushButton("Download")
         self.keyfile2.clicked.connect(self.savefile)
-        # self.shiftnum = QLineEdit()
-        # self.onlyInt = QIntValidator()
-        # self.shiftnum.setValidator(self.onlyInt)
-        # self.tabel = QPlainTextEdit()
-        # self.matriks = QPlainTextEdit()
-        # self.full_kunci = QLineEdit()
-        # self.relatifprima = QComboBox()
-        # self.binaryfile = ''
-        # self.relatifprima.addItems(["1","3","5","7","9","11","15","17","19","21","23","25"])
-
-        # Buttons
-        # self.generate = QPushButton("Buat tabel acak")
-        # self.generate.clicked.connect(self.shuffleAZ)
-        # self.importabel = QPushButton("Impor tabel...")
-        # self.importabel.clicked.connect(self.loadtabel)
-        # self.eksportabel = QPushButton("Ekspor tabel...")
-        # self.eksportabel.clicked.connect(self.savetabel)
+        self.binaryfile = ''
 
         
         # Buat menu beda sesuai jenis cipher
@@ -112,9 +96,6 @@ class MainWindow(QMainWindow):
         
 
         # Masukkan menu ganti cipher
-        #layout.addWidget(self.label1)
-        #layout.addWidget(self.ciphertype)
-        #layout.addWidget(self.stack)
         layout.addWidget(self.space)
         layout.addWidget(self.label2)
         layout.addWidget(self.inputfield)
@@ -124,8 +105,6 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.outputfield)
         layout.addWidget(self.choosefile2)
         layout.addWidget(self.label4)
-        #layout.addWidget(self.encrypt)
-        #layout.addWidget(self.decrypt)
 
         widget = QWidget()
         hbox.addLayout(layout)
@@ -156,21 +135,21 @@ class MainWindow(QMainWindow):
         self.stack1.setLayout(layout)
 
     def layout2(self):
-        # # Layout 2. Enigma Cipher
-        # layout = QVBoxLayout()
-        # layout.setContentsMargins(0, 23, 0, 19)
+        # Layout 2. Enigma Cipher
+        layout = QVBoxLayout()
+        layout.setContentsMargins(0, 23, 0, 19)
 
-        # labelkey = QLabel("Matriks Kunci:")
+        labelkey = QLabel("Matriks Kunci:")
 
-        # layout.addWidget(labelkey)
+        layout.addWidget(labelkey)
         # layout.addWidget(self.matriks)
-        # layout.setAlignment(Qt.AlignTop)
+        layout.setAlignment(Qt.AlignTop)
         
-        # self.stack2.setLayout(layout)
-        pass
+        self.stack2.setLayout(layout)
+        
 
     def layout3(self):
-        # Layout 3. One-time Pad
+        # # Layout 3. One-time Pad
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 32, 0, 0)
 
@@ -185,46 +164,60 @@ class MainWindow(QMainWindow):
         
 
 
-    def changemenus(self, s):
+    def changemenus(self):
         # Untuk ganti menu saat mengubah jenis cipher
         index = self.ciphertype.currentIndex()
         if index == 3:
-            self.stack.setCurrentIndex(2)
+            self.stack.setCurrentIndex(1)
         elif index == 4:
-            self.stack.setCurrentIndex(3)
+            self.stack.setCurrentIndex(2)
         else:
             self.stack.setCurrentIndex(0)
-
-        # if index == 3:
-        #     self.inputfield.setDisabled(True)
-        # else:
-        #     self.inputfield.setDisabled(False)
 
 
     def encrypt_function(self):
         index = self.ciphertype.currentIndex()
         inputtext = self.inputfield.toPlainText()
         output = ''
-        # content = ''
-        # isbinary = False
+        isbinary = False
         
-        if index == 3:
+        if index == 0:
             keytext = self.key.text()
-            output = playfair(True, keytext, inputtext)
+            output = vigenere(inputtext, keytext, True)
         
-        elif index == 4:
+        elif index == 1:
+            keytext = self.key.text()
+            instring = []
+
+            if os.path.exists(inputtext):
+                isbinary = True
+                with open(inputtext, 'rb') as f:
+                    byte = f.read(1)
+                    while byte:
+                        instring.append(int.from_bytes(byte, "big"))   
+                        byte = f.read(1)
+                    encrypted = bytearray(extvigenere(instring, keytext, True))
+                    self.binaryfile = encrypted
+            else:
+                output = extvigenere(inputtext, keytext, True)
+        
+        elif index == 2:
+            keytext = self.key.text()
+            output = playfair(inputtext, keytext, True)
+        
+        elif index == 3:
             output = "Enigma"
 
-        elif index == 5:
+        elif index == 4:
             keytext = self.key.text()
-            output = otp(inputtext, teksmatriks, True)
+            output = otp(inputtext, True)
             
         # Tambah space jika opsi dipilih
         if self.space.isChecked():
             output = ' '.join(output[i:i+5] for i in range(0,len(output),5))
             
-        if index == 3 and isbinary:
-            output = 'Berkas telah diencrypt. Silakan unduh dengan tombol "Simpan..."'
+        if index == 1 and isbinary:
+            output = 'Berkas telah diencrypt. Silakan unduh dengan tombol "Download"'
 
         self.outputfield.setPlainText(output)
 
@@ -234,58 +227,39 @@ class MainWindow(QMainWindow):
         output = ''
         isbinary = False
         
-        
         if index == 0:
-            keytext = self.vigenere_kunci.text()
-            output = vigenere(keytext, inputtext, False, False)
-
+            keytext = self.key.text()
+            output = vigenere(inputtext, keytext, False)
+        
         elif index == 1:
-            keytext = self.full_kunci.text()
-            tabel = self.tabel.toPlainText()
-            output = fullvigenere(keytext, inputtext, tabel, False)
-
-        elif index == 2:
-            keytext = self.vigenere_kunci.text()
-            output = vigenere(keytext, inputtext, False, True)
-
-        elif index == 3:
-            keytext = self.vigenere_kunci.text()
+            keytext = self.key.text()
             instring = []
             
             if os.path.exists(inputtext):
                 with open(inputtext, 'rb') as f:
                     isbinary = True
-                    #byte = f.read(1)
-                    #while byte:
-                        #instring += chr(ord(byte))
-                        #byte = f.read(1)
-                    #encrypted = vigenere(keytext, instring, True, False, True)
-                    #self.binaryfile = encrypted
                     byte = f.read(1)
                     while byte:
                         instring.append(int.from_bytes(byte, "big"))   
                         byte = f.read(1)
-                    encrypted = bytearray(vigenerebin(keytext, instring, False))
+                    encrypted = bytearray(extvigenere(instring, keytext, False))
                     self.binaryfile = encrypted
-
             else:
-                output = vigenere(keytext, inputtext, False, False, True)
-            
-        elif index == 4:
-            keytext = self.vigenere_kunci.text()
-            output = playfair_decipher(inputtext, keytext).upper()
+                output = extvigenere(inputtext, keytext, False)
         
-        elif index == 5:
-            shift = int(self.shiftnum.text())
-            relprime = int(self.relatifprima.currentText())
-            output = affine_decipher(inputtext, relprime, shift).upper()
-            
-        elif index == 6:
-            teksmatriks = self.matriks.toPlainText()
-            output = hill(inputtext, teksmatriks, False)
+        elif index == 2:
+            keytext = self.key.text()
+            output = playfair(inputtext, keytext, False)
+        
+        elif index == 3:
+            output = "Enigma"
 
-        if index == 3 and isbinary:
-            output = 'Berkas telah didecrypt. Silakan unduh dengan tombol "Simpan..."'
+        elif index == 4:
+            keytext = self.key.text()
+            output = otp(inputtext, False)
+
+        if index == 1 and isbinary:
+            output = 'Berkas telah didecrypt. Silakan unduh dengan tombol "Download"'
 
         self.outputfield.setPlainText(output)
 
@@ -304,39 +278,7 @@ class MainWindow(QMainWindow):
                    content = f.read()
                    self.inputfield.setPlainText(content)
             else:
-                # File biner
-                #with open(fileName, 'rb') as f:
-                   #bytecontent = f.read()
                 self.inputfield.setPlainText(fileName)
-
-    def shuffleAZ(self):
-        # Buat tabel huruf random untuk cipher Full Vigenere
-        alfabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-        shuffled = ''.join(random.sample(alfabet,len(alfabet)))
-        content = shuffled
-        for i in range(26):
-            shuffled = ''.join(random.sample(alfabet,len(alfabet)))
-            content += '\n'
-            content += shuffled
-        
-        self.tabel.setPlainText(content)
-
-    def loadtabel(self):
-        fileName, _ = QFileDialog.getOpenFileName(self, 'Load Tabel','.', "Text Files (*.txt)")
-        content = ''
-        # File txt
-        if fileName:
-            with open(fileName, 'r') as f:
-                content = f.read()
-                self.tabel.setPlainText(content)
-
-    def savetabel(self):
-        fileName, _ = QFileDialog.getSaveFileName(self, 'Save Tabel', 'tabel.txt')
-        if fileName:
-            tabel = self.tabel.toPlainText()
-            fname = open(fileName, 'w')
-            fname.write(tabel)
-            fname.close()
 
     def savefile(self):
         index = self.ciphertype.currentIndex()
@@ -354,9 +296,6 @@ class MainWindow(QMainWindow):
                 fname = open(fileName, 'w')
                 fname.write(output)
                 fname.close()
-
-    
-
 
 app = QApplication(sys.argv)
 window = MainWindow()
