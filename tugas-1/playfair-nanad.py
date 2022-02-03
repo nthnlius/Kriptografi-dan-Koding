@@ -1,122 +1,123 @@
-##Fungsi Pembuatan Key Matrix
-def key_mtx(key):
-    key = key.replace(" ", "")
+def playfair (plaintext, key, enkripsi):
+    globalkey = 'abcdefghiklmnopqrstuvwxyz'
+    globalkey = globalkey.upper()
+    listkey = []
     key = key.upper()
-
-    keylist = list()
-    for x in key:
-        if x not in keylist:
-            if x != 'J':
-                keylist.append(x)
-
-    for i in range(65, 91):
-        if chr(i) not in keylist:
-            if chr(i) != 'J':
-                keylist.append(chr(i))
-
-    matrix = [[0 for i in range(5)] for i in range(5)]
-    id = 0
-    for i in range(5):
-        for j in range(5):
-            matrix[i][j] = keylist[id]
-            id += 1
-    
-    return matrix
-
-
-##Fungsi Playfair
-def playfair(enkripsi, key, input):
-        
-    matrix = key_mtx(key)
-    
-    input = input.replace(" ", "")
-    input = input.upper()
-    
-    if enkripsi:
-        input = input.replace("J", "I")
-
-        done = False
-        c = 0
-        while not done:
-            if c >= len(input) - 1:
-                done = True
-            else:
-                if input[c] == input[c+1]:
-                    input = input[:c+1] + 'X' + input[c+1:]
-                c += 2
-
-        if (len(input) % 2) == 1:
-            input = input + 'X'
-
-    c = 0
-    output = ""
-
-    while c < len(input):
-        i1 = 0
-        j1 = 0
-        i2 = 0
-        j2 = 0
-        found1 = False
-        found2 = False
-
-        while (found1 and found2) is False: 
-            for i in range(5):
-                for j in range(5):
-                    if (found1 and found2) is False:
-                        if matrix[i][j] == input[c]:
-                            i1 = i
-                            j1 = j
-                            found1 = True
-                        elif matrix[i][j] == input[c+1]:
-                            i2 = i
-                            j2 = j
-                            found2 = True
-
-        if i1 == i2:
-            if enkripsi:
-                output += matrix[i1][(j1+1) % 5]
-                output += matrix[i2][(j2+1) % 5]
-            else:
-                output += matrix[i1][(j1-1) % 5]
-                output += matrix[i2][(j2-1) % 5]
-        elif j1 == j2:
-            if enkripsi:
-                output += matrix[(i1+1) % 5][j1]
-                output += matrix[(i2+1) % 5][j2]
-            else:
-                output += matrix[(i1-1) % 5][j1]
-                output += matrix[(i2-1) % 5][j2]
-        else:
-            output += matrix[i1][j2]
-            output += matrix [i2][j1]
-
-        c += 2
-
-    return output
+    for char in key :
+        if (char not in listkey):
+            if (char != 'J'):
+                listkey.append(char)
+    for char in globalkey :
+        if (char not in listkey):
+            listkey.append(char)
+    # print(listkey)
+    keysquare = [['A'for i in range (5)] for j in range (5)]
+    strkey = ""
+    for i in range (5):
+        for j in range (5):
+            keysquare[i][j] = listkey[i*5+j]
+            strkey += listkey[i*5+j]    
+        # print(keysquare)
+    if enkripsi :
+        plaintext.upper()
+        plaintext.replace("J", "I")
+        bigram = []
+        i = 0
+        while (i < len (plaintext)-1):
+            if plaintext[i]== plaintext[i+1] :
+                text = plaintext[i] + 'X'
+                i+=1
+                bigram.append(text)
+            else :
+                text = plaintext[i] + plaintext[i+1]
+                i+=2
+                bigram.append(text)
+        if (i+1 == len (plaintext)):
+            text = plaintext[i]+"X"
+            bigram.append(text)
+        finalbigram = []
+        for couple in bigram :
+            if is_same_row(couple[0], couple[1], strkey):
+                text = strkey[(strkey.find(couple[0])+1)%5 + (strkey.find(couple[0])//5)*5] + strkey[(strkey.find(couple[1])+1)%5 + (strkey.find(couple[1])//5)*5]
+                finalbigram.append(text)
+            elif is_same_column(couple[0], couple[1], strkey):
+                text = strkey[(strkey.find(couple[0])+5)%25] + strkey[(strkey.find(couple[1])+5)%25]
+                finalbigram.append(text)
+            else :
+                i0 = strkey.find(couple[0])//5
+                j0 = strkey.find(couple[0])%5
+                i1 = strkey.find(couple[1])//5
+                j1 = strkey.find(couple[1])%5
+                text = strkey[i0*5 + j1] + strkey[i1*5 + j0]
+                finalbigram.append(text)
+        finaltext = ""
+        for couple in finalbigram :
+            finaltext = finaltext + couple[0]+couple[1]
+        return finaltext
+    else :
+        bigram = []
+        for i in range (0, len(plaintext), 2):
+            text = plaintext[i]+ plaintext[i+1]
+            bigram.append(text)
+        finalbigram = []
+        for couple in bigram :
+            if (is_same_row(couple[0], couple[1], strkey)):
+                character1 = strkey[(strkey.find(couple[0]) - 1)%5 + (strkey.find(couple[0])//5)*5]
+                character2 = strkey[(strkey.find(couple[1])-1)%5 + (strkey.find(couple[0])//5)*5] 
+                text = character1+character2
+                del(character1)
+                del(character2)
+                finalbigram.append(text)
+            elif (is_same_column(couple[0], couple[1], strkey)):
+                character1 = strkey[(strkey.find(couple[0])-5)%25]
+                character2 = strkey[(strkey.find(couple[1])-5)%25]
+                text = character1 + character2
+                del (character1)
+                del (character2)
+                finalbigram.append(text)
+            else :
+                i0 = strkey.find(couple[0])//5
+                j0 = strkey.find(couple[0])%5
+                i1 = strkey.find(couple[1])//5
+                j1 = strkey.find(couple[1])%5
+                text = strkey[i0*5 + j1] + strkey[i1*5 + j0]
+                finalbigram.append(text)
+        finaltext = ""
+        for char in finalbigram:
+            finaltext = finaltext + char[0]+char[1]
+        return finaltext
 
 
-##Pilih enkripsi atau dekripsi
-method = input("Pilih enkripsi atau dekripsi (E/D): ")
+def is_same_row (char1, char2, string):
+    #fungsi digunakan untuk mencari apakah char1 dan char2 pada baris yang sama :
+    return (string.find(char1)//5 == string.find(char2)//5)
+def is_same_column (char1, char2, string):
+    return (string.find(char1)% 5 == string.find(char2)%5)
 
-stop = False
-while not stop:
-    ##Enkripsi:
-    if (method.upper() == "E"):
-        pt = input("Masukkan plaintext: ")        
-        key = input("Masukkan key: ")
-        ct = playfair(True, key, pt)
-        print(ct)
 
-    ##Dekripsi:
-    elif (method.upper() == "D"):
-        ct = input("Masukkan ciphertext: ")        
-        key = input("Masukkan key: ")
-        pt = ""
-        pt = playfair(False, key, ct)
-        print(pt)
 
-    stp = input("Stop (Y/N)? ")
-    if (stp.upper() == "Y"):
-        stop = True
-    else:
-        method = input("Pilih enkripsi atau dekripsi (E/D): ")
+# ##Pilih enkripsi atau dekripsi
+# method = input("Pilih enkripsi atau dekripsi (E/D): ")
+
+# stop = False
+# while not stop:
+#     ##Enkripsi:
+#     if (method.upper() == "E"):
+#         pt = input("Masukkan plaintext: ")        
+#         key = input("Masukkan key: ")
+#         ct = playfair(True, key, pt)
+#         print(ct)
+
+#     ##Dekripsi:
+#     elif (method.upper() == "D"):
+#         ct = input("Masukkan ciphertext: ")        
+#         key = input("Masukkan key: ")
+#         pt = ""
+#         pt = playfair(False, key, ct)
+#         print(pt)
+
+#     stp = input("Stop (Y/N)? ")
+#     if (stp.upper() == "Y"):
+#         stop = True
+#     else:
+#         method = input("Pilih enkripsi atau dekripsi (E/D): ")
