@@ -24,9 +24,7 @@ from PyQt5.QtWidgets import (
 
 from vigenere import *
 from playfair import *
-# from extvigenere import *
 from enigma import *
-# from otp import *
 
 
 class MainWindow(QMainWindow):
@@ -205,60 +203,21 @@ class MainWindow(QMainWindow):
 
     def encrypt_function(self):
         index = self.ciphertype.currentIndex()
-        teksinput = self.inputfield.toPlainText()
+        inputtext = self.inputfield.toPlainText()
         output = ''
-        content = ''
-        isbinary = False
+        # content = ''
+        # isbinary = False
         
-        if index == 0:
-            tekskunci = self.vigenere_kunci.text()
-            output = vigenere(tekskunci, teksinput, True, False)
-
-        elif index == 1:
-            tekskunci = self.full_kunci.text()
-            tabel = self.tabel.toPlainText()
-            output = fullvigenere(tekskunci, teksinput, tabel, True)
-
-        elif index == 2:
-            tekskunci = self.vigenere_kunci.text()
-            output = vigenere(tekskunci, teksinput, True, True)
-
-        elif index == 3:
-            tekskunci = self.vigenere_kunci.text()
-            instring = []
-            
-            if os.path.exists(teksinput):
-                isbinary = True
-                with open(teksinput, 'rb') as f:
-                    #byte = f.read(1)
-                    #while byte:
-                        #instring += chr(ord(byte))
-                        #byte = f.read(1)
-                    #encrypted = vigenere(tekskunci, instring, True, False, True)
-                    #self.binaryfile = encrypted
-                    byte = f.read(1)
-                    while byte:
-                        instring.append(int.from_bytes(byte, "big"))   
-                        byte = f.read(1)
-                    encrypted = bytearray(vigenerebin(tekskunci, instring, True))
-                    self.binaryfile = encrypted
-
-            else:
-                output = vigenere(tekskunci, teksinput, True, False, True)
-            
-
+        if index == 3:
+            keytext = self.key.text()
+            output = playfair(True, keytext, inputtext)
+        
         elif index == 4:
-            tekskunci = self.vigenere_kunci.text()
-            output = playfair_cipher(teksinput, tekskunci).upper()
-        
-        elif index == 5:
-            shift = int(self.shiftnum.text())
-            relprime = int(self.relatifprima.currentText())
-            output = affine_cipher(teksinput, relprime, shift).upper()
+            output = "Enigma"
 
-        elif index == 6:
-            teksmatriks = self.matriks.toPlainText()
-            output = hill(teksinput, teksmatriks, True)
+        elif index == 5:
+            keytext = self.key.text()
+            output = otp(inputtext, teksmatriks, True)
             
         # Tambah space jika opsi dipilih
         if self.space.isChecked():
@@ -271,59 +230,59 @@ class MainWindow(QMainWindow):
 
     def decrypt_function(self):
         index = self.ciphertype.currentIndex()
-        teksinput = self.inputfield.toPlainText()
+        inputtext = self.inputfield.toPlainText()
         output = ''
         isbinary = False
         
         
         if index == 0:
-            tekskunci = self.vigenere_kunci.text()
-            output = vigenere(tekskunci, teksinput, False, False)
+            keytext = self.vigenere_kunci.text()
+            output = vigenere(keytext, inputtext, False, False)
 
         elif index == 1:
-            tekskunci = self.full_kunci.text()
+            keytext = self.full_kunci.text()
             tabel = self.tabel.toPlainText()
-            output = fullvigenere(tekskunci, teksinput, tabel, False)
+            output = fullvigenere(keytext, inputtext, tabel, False)
 
         elif index == 2:
-            tekskunci = self.vigenere_kunci.text()
-            output = vigenere(tekskunci, teksinput, False, True)
+            keytext = self.vigenere_kunci.text()
+            output = vigenere(keytext, inputtext, False, True)
 
         elif index == 3:
-            tekskunci = self.vigenere_kunci.text()
+            keytext = self.vigenere_kunci.text()
             instring = []
             
-            if os.path.exists(teksinput):
-                with open(teksinput, 'rb') as f:
+            if os.path.exists(inputtext):
+                with open(inputtext, 'rb') as f:
                     isbinary = True
                     #byte = f.read(1)
                     #while byte:
                         #instring += chr(ord(byte))
                         #byte = f.read(1)
-                    #encrypted = vigenere(tekskunci, instring, True, False, True)
+                    #encrypted = vigenere(keytext, instring, True, False, True)
                     #self.binaryfile = encrypted
                     byte = f.read(1)
                     while byte:
                         instring.append(int.from_bytes(byte, "big"))   
                         byte = f.read(1)
-                    encrypted = bytearray(vigenerebin(tekskunci, instring, False))
+                    encrypted = bytearray(vigenerebin(keytext, instring, False))
                     self.binaryfile = encrypted
 
             else:
-                output = vigenere(tekskunci, teksinput, False, False, True)
+                output = vigenere(keytext, inputtext, False, False, True)
             
         elif index == 4:
-            tekskunci = self.vigenere_kunci.text()
-            output = playfair_decipher(teksinput, tekskunci).upper()
+            keytext = self.vigenere_kunci.text()
+            output = playfair_decipher(inputtext, keytext).upper()
         
         elif index == 5:
             shift = int(self.shiftnum.text())
             relprime = int(self.relatifprima.currentText())
-            output = affine_decipher(teksinput, relprime, shift).upper()
+            output = affine_decipher(inputtext, relprime, shift).upper()
             
         elif index == 6:
             teksmatriks = self.matriks.toPlainText()
-            output = hill(teksinput, teksmatriks, False)
+            output = hill(inputtext, teksmatriks, False)
 
         if index == 3 and isbinary:
             output = 'Berkas telah didecrypt. Silakan unduh dengan tombol "Simpan..."'
