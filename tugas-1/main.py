@@ -78,7 +78,7 @@ class MainWindow(QMainWindow):
         self.rotor1 = QLineEdit()
         self.rotor2 = QLineEdit()
         self.rotor3 = QLineEdit()
-        self.displaykey = QLineEdit()
+        self.displaykey = QPlainTextEdit()
         self.displaykey.setDisabled(True)
 
 
@@ -180,7 +180,7 @@ class MainWindow(QMainWindow):
 
         labelkey = QLabel("Key:")
         layout.addWidget(labelkey)
-        layout.addWidget(displaykey)
+        layout.addWidget(self.displaykey)
         layout.addWidget(self.keyfile)
         layout.addWidget(self.keyfile2)
         layout.setAlignment(Qt.AlignTop)
@@ -188,7 +188,14 @@ class MainWindow(QMainWindow):
         self.stack3.setLayout(layout)
         
 
-
+    def loadkey(self):
+        fileName, _ = QFileDialog.getOpenFileName(self, 'Load Tabel','.', "Text Files (*.txt)")
+        content = ''
+        # File txt
+        if fileName:
+            with open(fileName, 'r') as f:
+                content = f.read()
+                self.displaytext.setPlainText(content)
     def changemenus(self):
         # Untuk ganti menu saat mengubah jenis cipher
         index = self.ciphertype.currentIndex()
