@@ -1,6 +1,7 @@
 import sys
 import random
 import os.path
+from winreg import LoadKey
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIntValidator
@@ -189,7 +190,7 @@ class MainWindow(QMainWindow):
         
 
     def loadkey(self):
-        fileName, _ = QFileDialog.getOpenFileName(self, 'Load Tabel','.', "Text Files (*.txt)")
+        fileName, _ = QFileDialog.getOpenFileName(self, 'Load Key','.', "Text Files (*.txt)")
         content = ''
         # File txt
         if fileName:
@@ -239,10 +240,13 @@ class MainWindow(QMainWindow):
             output = playfair(inputtext, keytext, True)
         
         elif index == 3:
-            output = "Enigma"
+            output = enigma(self.rotor3.text(), self.rotor2.text(), self.rotor1.text(), inputtext, True)
 
         elif index == 4:
             output = otp(inputtext, True, self.displaykey.toPlainText())
+            with open("keyII4031Kirptografidankodingtapiadatypo.txt", 'r') as f:
+                content = f.read()
+                self.displaykey.setPlainText(content)
             
         # Tambah space jika opsi dipilih
         if self.space.isChecked():
@@ -284,7 +288,7 @@ class MainWindow(QMainWindow):
             output = playfair(inputtext, keytext, False)
         
         elif index == 3:
-            output = "Enigma"
+            output = enigma(self.rotor3.text(), self.rotor2.text(), self.rotor1.text(), inputtext, False)
 
         elif index == 4:
             output = otp(inputtext, False, self.displaykey.toPlainText())
