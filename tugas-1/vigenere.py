@@ -20,6 +20,7 @@ def otp(plain, enkripsi, keyfiles):
     #plain adalah plaintext yang akan di-cipher-kan
     #enkripsi adalah nilai boolean yang akan bernilai True jika pengguna ingin mengenkripsi
         # dan akan bernilai False jika pengguna ingin mendekripsi.
+    plain = plain.replace(" ", "")
     if enkripsi :
         randomtext(len(plain))
         global keyfile
@@ -30,11 +31,13 @@ def otp(plain, enkripsi, keyfiles):
     ciphertext = vigenere(plain, key, enkripsi)
 
     return ciphertext
+
 def vigenere (plain, key, encrypt): 
     #plain adalah plaintext
     #key adalah kuncinya
     #encrypt adalah boolean. True jika akan mengenkripsi, false jika akan mendekripsi
     plain = plain.upper()
+    plain = plain.replace(" ", "")
     key = key.upper()
     if encrypt :#pilihan mengenkripsi
         text = ""
@@ -58,6 +61,7 @@ def vigenere (plain, key, encrypt):
         return text
 
 def extvigenere (plain, key, encrypt):
+    plain = plain.replace(" ", "")
     res = ""
     if encrypt :
         res = bytes([((ord(x)+ord(key[i%len(key)]))%256)for i, x in enumerate(plain)])
