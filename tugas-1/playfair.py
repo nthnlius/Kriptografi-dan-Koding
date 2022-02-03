@@ -25,7 +25,7 @@ def key_mtx(key):
 
 
 ##Fungsi Playfair
-def playfair(enkripsi, key, input):
+def playfair(input, key, enkripsi):
         
     matrix = key_mtx(key)
     

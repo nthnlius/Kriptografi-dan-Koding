@@ -47,13 +47,6 @@ def vigenere (plain, key, encrypt, group):
                 text += chr(ordhasil)
             else :
                 text+=chr(ordchar)
-        if group :
-            ciphertext1 = '' + text[0]
-            for i in range (1, len(text)):
-                if i%5==0 :
-                    ciphertext1+=" "
-                ciphertext1+=text[i]
-            text = ciphertext1
         return text
     else : #pilihan mendekripsi
         text = ""
@@ -71,5 +64,3 @@ def extvigenere (plain, key, encrypt):
     else :
         res = bytes([((ord(x)-ord(key[i%len(key)]))%256)for i, x in enumerate(plain)])
     return res
-
-print(otp ("thisplaintext", True, True))
