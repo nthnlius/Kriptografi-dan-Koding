@@ -17,7 +17,7 @@ def randomtext(length):
     with open(keyfile, mode) as f:
         f.write(test)
 
-def otp(plain, enkripsi):
+def otp(plain, enkripsi, group):
     #plain adalah plaintext yang akan di-cipher-kan
     #enkripsi adalah nilai boolean yang akan bernilai True jika pengguna ingin mengenkripsi
         # dan akan bernilai False jika pengguna ingin mendekripsi.
@@ -26,9 +26,10 @@ def otp(plain, enkripsi):
     global keyfile
     with open(keyfile)as f:
         key = f.readline()
-    ciphertext = vigenere(plain, key, enkripsi)
+    ciphertext = vigenere(plain, key, enkripsi, group)
+
     return ciphertext
-def vigenere (plain, key, encrypt): 
+def vigenere (plain, key, encrypt, group): 
     #plain adalah plaintext
     #key adalah kuncinya
     #encrypt adalah boolean. True jika akan mengenkripsi, false jika akan mendekripsi
@@ -46,6 +47,13 @@ def vigenere (plain, key, encrypt):
                 text += chr(ordhasil)
             else :
                 text+=chr(ordchar)
+        if group :
+            ciphertext1 = '' + text[0]
+            for i in range (1, len(text)):
+                if i%5==0 :
+                    ciphertext1+=" "
+                ciphertext1+=text[i]
+            text = ciphertext1
         return text
     else : #pilihan mendekripsi
         text = ""
@@ -63,3 +71,5 @@ def extvigenere (plain, key, encrypt):
     else :
         res = bytes([((ord(x)-ord(key[i%len(key)]))%256)for i, x in enumerate(plain)])
     return res
+
+print(otp ("thisplaintext", True, True))
