@@ -1,4 +1,5 @@
 ##Fungsi Pembuatan Key Matrix
+from string import ascii_uppercase
 def key_mtx(key):
     key = key.replace(" ", "")
     key = key.upper()
@@ -26,12 +27,19 @@ def key_mtx(key):
 
 ##Fungsi Playfair
 def playfair(input, key, enkripsi):
-        
+    permittedlist = list(ascii_uppercase)
     matrix = key_mtx(key)
     
     input = input.replace(" ", "")
     input = input.upper()
-    
+    finaltext = []
+    for i in range (len(input)):
+        if input[i] not in permittedlist:
+            pass
+        else :
+            finaltext.append(input[i])
+    input = ''
+    input = input.join(finaltext)
     if enkripsi:
         input = input.replace("J", "I")
 

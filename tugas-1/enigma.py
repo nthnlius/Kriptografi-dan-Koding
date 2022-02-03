@@ -11,8 +11,6 @@ def permutate(rotor):
         for iter in range(rotor):
             new_alphabet.insert(0, new_alphabet[-1])
             new_alphabet.pop(-1)
-        # print(alphabet)
-        # print(new_alphabet)
         return new_alphabet
 def inverse_permutation(rotor):
         ''' This function is permutatting the alphabet depending on the rotors settings on the back way '''
@@ -22,8 +20,6 @@ def inverse_permutation(rotor):
         for iter in range(rotor):
             new_alphabet.append(new_alphabet[0])
             new_alphabet.pop(0)
-        # print(alphabet)
-        # print(new_alphabet)
         return new_alphabet
 
 def enigma (alphaasc, betaasc, gamaasc, text, enkripsi):
@@ -49,7 +45,8 @@ def enigma (alphaasc, betaasc, gamaasc, text, enkripsi):
     for letter in text:
         # Checking if the letter is in steckerbrett
         if letter not in alphabet :
-            encrypted_text.append(letter)
+            # encrypted_text.append(letter)
+            pass
         else :
             if letter in steckerbrett:
                 # If it is, the we encrypt it as it's pair

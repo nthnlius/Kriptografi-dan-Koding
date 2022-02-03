@@ -1,5 +1,4 @@
 from random import randrange
-import os.path
 keyfile = "keyII4031Kirptografidankodingtapiadatypo.txt"
 mode = "w"
 def randomtext(length):
@@ -47,8 +46,6 @@ def vigenere (plain, key, encrypt):
                 ordhasil = (ordchar - 65 + ordkey - 65)%26 + 65
                 
                 text += chr(ordhasil)
-            else :
-                text+=chr(ordchar)
         return text
     else : #pilihan mendekripsi
         text = ""
@@ -58,8 +55,6 @@ def vigenere (plain, key, encrypt):
                 ordkey = ord(key[i%len(key)])
                 ordhasil = (ordchar - ordkey)%26
                 text += chr(ordhasil+65)
-            else :
-                text += chr(ordchar)
         return text
 
 def extvigenere (plain, key, encrypt):
