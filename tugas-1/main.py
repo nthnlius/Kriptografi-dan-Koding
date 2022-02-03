@@ -207,6 +207,11 @@ class MainWindow(QMainWindow):
             self.stack.setCurrentIndex(2)
         else:
             self.stack.setCurrentIndex(0)
+        
+        self.inputfield.clear()
+        self.outputfield.clear()
+        self.key.clear()
+        self.displaykey.clear()
 
 
     def encrypt_function(self):
@@ -234,6 +239,13 @@ class MainWindow(QMainWindow):
                     self.binaryfile = encrypted
             else:
                 output = extvigenere(inputtext, keytext, True)
+                fileName, _ = QFileDialog.getSaveFileName(self, 'Save Output', 'output')
+                fname = open(fileName, 'wb')
+                fname.write(output)
+                fname.close()
+                self.savefile()
+                output = ''
+
         
         elif index == 2:
             keytext = self.key.text()
@@ -282,6 +294,12 @@ class MainWindow(QMainWindow):
                     self.binaryfile = encrypted
             else:
                 output = extvigenere(inputtext, keytext, False)
+                fileName, _ = QFileDialog.getSaveFileName(self, 'Save Output', 'output')
+                fname = open(fileName, 'wb')
+                fname.write(output)
+                fname.close()
+                self.savefile()
+                output = ''
         
         elif index == 2:
             keytext = self.key.text()
