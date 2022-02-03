@@ -1,6 +1,7 @@
 from random import randrange
 from telnetlib import ENCRYPT
-keyfile = "key.txt"
+import os.path
+keyfile = "keyII4031Kirptografidankodingtapiadatypo.txt"
 mode = "w"
 def randomtext(length):
     #untuk membangkitkan sebuah text file dengan
@@ -17,19 +18,23 @@ def randomtext(length):
     with open(keyfile, mode) as f:
         f.write(test)
 
-def otp(plain, enkripsi, group):
+def otp(plain, enkripsi, keyfiles):
     #plain adalah plaintext yang akan di-cipher-kan
     #enkripsi adalah nilai boolean yang akan bernilai True jika pengguna ingin mengenkripsi
         # dan akan bernilai False jika pengguna ingin mendekripsi.
     if enkripsi :
         randomtext(len(plain))
-    global keyfile
-    with open(keyfile)as f:
-        key = f.readline()
-    ciphertext = vigenere(plain, key, enkripsi, group)
+        global keyfile
+        with open(keyfile)as f:
+            key = f.readline()
+    else :
+        if os.path.exists(keyfiles):
+            with open (keyfiles)as f :
+                key = f.readline()
+    ciphertext = vigenere(plain, key, enkripsi)
 
     return ciphertext
-def vigenere (plain, key, encrypt, group): 
+def vigenere (plain, key, encrypt): 
     #plain adalah plaintext
     #key adalah kuncinya
     #encrypt adalah boolean. True jika akan mengenkripsi, false jika akan mendekripsi
