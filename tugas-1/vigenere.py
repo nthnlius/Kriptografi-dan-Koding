@@ -55,9 +55,12 @@ def vigenere (plain, key, encrypt):
         text = ""
         for i in range (len(plain)):
             ordchar = ord(plain[i])
-            ordkey = ord(key[i%len(key)])
-            ordhasil = (ordchar - ordkey)%26
-            text += chr(ordhasil+65)
+            if (ordchar>=65 and ordchar<=90):
+                ordkey = ord(key[i%len(key)])
+                ordhasil = (ordchar - ordkey)%26
+                text += chr(ordhasil+65)
+            else :
+                text += chr(ordchar)
         return text
 
 def extvigenere (plain, key, encrypt):
