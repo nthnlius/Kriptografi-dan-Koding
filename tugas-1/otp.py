@@ -53,3 +53,54 @@ def vigenere (plain, key, encrypt):
             ordhasil = (ordchar - ordkey)%26
             text += chr(ordhasil+65)
         return text
+
+def extvigenere (plain, key, encrypt):
+    key = key.upper()
+    if (len(key)<len(plain)):
+        for i in range (len(plain)-len(key)):
+            key += key[i]
+    
+    if encrypt :#pilihan mengenkripsi
+        text = ""
+        for i in range (len(plain)):
+            ordchar = ord(plain[i])
+            # if (ordchar >=65 and ordchar <= 90):
+            idxkey = i%len(key)
+            ordkey = ord(key[idxkey])
+            ordhasil = (ordchar+ ordkey)%256
+            
+            text += chr(ordhasil)
+        # else :
+            # text+=chr(ordchar)
+        return text
+    else : #pilihan mendekripsi
+        text = ""
+        for i in range (len(plain)):
+            ordchar = ord(plain[i])
+            idxkey = i%len(key)
+            ordkey = ord(key[idxkey])
+            ordhasil = (ordchar - ordkey)%256
+            text += chr(ordhasil)
+        return text
+
+# plaintext = "!@#$%^&*"
+key = "!+!+!+!+!+!+!+"
+# cipher = extvigenere(plaintext, key, True)
+# with open("test.txt", "w") as f:
+#     f.write(cipher)
+
+f = open("test.txt", "rb")
+# with open("plain.txt", "rb") as f :
+#     byte = f.read(1)
+byte = f.read(1)
+# print(byte)
+ciphertext = ""
+
+# ciphertext += chr(byte)
+while (byte):
+    ciphertext += chr(byte[0])
+    byte = f.read(1)
+plain = extvigenere(ciphertext, key, False)
+with open("plain.txt", "w")as f:
+    f.write(plain)
+print(plain)
