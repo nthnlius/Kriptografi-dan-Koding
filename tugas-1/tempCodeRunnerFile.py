@@ -1,1 +1,0 @@
-output = otp(inputtext, False, self.keyfile.text())
