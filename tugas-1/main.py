@@ -55,7 +55,7 @@ class MainWindow(QMainWindow):
         self.choosefile = QPushButton("Choose file")
         self.labelpath = QLabel("")
         self.choosefile.clicked.connect(self.open)
-        self.choosefile2 = QPushButton("Upload")
+        self.choosefile2 = QPushButton("Download")
         self.choosefile2.clicked.connect(self.savefile)
         
         self.label4 = QLabel()
@@ -69,10 +69,10 @@ class MainWindow(QMainWindow):
 
         # Extra fields
         self.key = QLineEdit()
-        self.keyfile = QPushButton("Choose file")
+        self.keyfile = QPushButton("Choose key file")
         self.labelpath = QLabel("")
-        self.keyfile.clicked.connect(self.open)
-        self.keyfile2 = QPushButton("Download")
+        self.keyfile.clicked.connect(self.loadkey)
+        self.keyfile2 = QPushButton("Download key")
         self.keyfile2.clicked.connect(self.savefile)
         self.binaryfile = ''
         self.rotor1 = QLineEdit()
@@ -195,7 +195,8 @@ class MainWindow(QMainWindow):
         if fileName:
             with open(fileName, 'r') as f:
                 content = f.read()
-                self.displaytext.setPlainText(content)
+                self.displaykey.setPlainText(content)
+
     def changemenus(self):
         # Untuk ganti menu saat mengubah jenis cipher
         index = self.ciphertype.currentIndex()
@@ -241,7 +242,7 @@ class MainWindow(QMainWindow):
             output = "Enigma"
 
         elif index == 4:
-            output = otp(inputtext, True, )
+            output = otp(inputtext, True, self.displaykey.toPlainText())
             
         # Tambah space jika opsi dipilih
         if self.space.isChecked():
@@ -286,7 +287,7 @@ class MainWindow(QMainWindow):
             output = "Enigma"
 
         elif index == 4:
-            output = otp(inputtext, False)
+            output = otp(inputtext, False, self.displaykey.toPlainText())
 
         if index == 1 and isbinary:
             output = 'Berkas telah didecrypt. Silakan unduh dengan tombol "Download"'

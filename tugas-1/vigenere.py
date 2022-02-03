@@ -28,9 +28,7 @@ def otp(plain, enkripsi, keyfiles):
         with open(keyfile)as f:
             key = f.readline()
     else :
-        if os.path.exists(keyfiles):
-            with open (keyfiles)as f :
-                key = f.readline()
+        key = keyfiles
     ciphertext = vigenere(plain, key, enkripsi)
 
     return ciphertext
