@@ -31,6 +31,8 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         self.setWindowTitle("Tugas Kecil 1 II4031 Kriptografi dan Koding")
+        self.setStyleSheet("font: 10pt Verdana;\n"
+                            "background-color: #f6d2e0")
 
         hbox = QHBoxLayout()
         layout = QVBoxLayout()
@@ -63,8 +65,8 @@ class MainWindow(QMainWindow):
         self.decrypt = QPushButton("Decrypt")
         self.decrypt.clicked.connect(self.decrypt_function)
 
-        self.encrypt.setStyleSheet("background-color : #98d6ed")
-        self.decrypt.setStyleSheet("background-color : #98d6ed")
+        self.encrypt.setStyleSheet("background-color : #67a3d9")
+        self.decrypt.setStyleSheet("background-color : #67a3d9")
 
         # Extra fields
         self.key = QLineEdit()
