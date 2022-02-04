@@ -31,6 +31,8 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         self.setWindowTitle("Tugas Kecil 1 II4031 Kriptografi dan Koding")
+        self.setStyleSheet("font: 10pt Verdana;\n"
+                            "background-color: #f6d2e0")
 
         hbox = QHBoxLayout()
         layout = QVBoxLayout()
@@ -38,24 +40,28 @@ class MainWindow(QMainWindow):
         self.label1 = QLabel("Cipher:")
         self.ciphertype = QComboBox()
         self.ciphertype.addItems(["Vigénere", "Extended Vigénere", "Playfair", "Enigma", "One-time Pad"])
-
+        self.ciphertype.setStyleSheet("background-color: white")
 
         self.space = QCheckBox("Use space in result")
 
         
         self.label2 = QLabel("Input:")
         self.inputfield = QPlainTextEdit()
+        self.inputfield.setStyleSheet("background-color: white")
 
         self.label3 = QLabel("Output:")
         self.outputfield = QPlainTextEdit()
         self.outputfield.setReadOnly(True)
+        self.outputfield.setStyleSheet("background-color: white")
 
 
         self.choosefile = QPushButton("Choose file")
         self.labelpath = QLabel("")
         self.choosefile.clicked.connect(self.open)
+        self.choosefile.setStyleSheet("background-color: #f8b7cd")
         self.choosefile2 = QPushButton("Download")
         self.choosefile2.clicked.connect(self.savefile)
+        self.choosefile2.setStyleSheet("background-color: #f8b7cd")
         
         self.label4 = QLabel()
         self.encrypt = QPushButton("Encrypt")
@@ -63,22 +69,29 @@ class MainWindow(QMainWindow):
         self.decrypt = QPushButton("Decrypt")
         self.decrypt.clicked.connect(self.decrypt_function)
 
-        self.encrypt.setStyleSheet("background-color : #98d6ed")
-        self.decrypt.setStyleSheet("background-color : #98d6ed")
+        self.encrypt.setStyleSheet("background-color : #67a3d9")
+        self.decrypt.setStyleSheet("background-color : #67a3d9")
 
         # Extra fields
         self.key = QLineEdit()
+        self.key.setStyleSheet("background-color: white")
         self.keyfile = QPushButton("Choose key file")
         self.labelpath = QLabel("")
         self.keyfile.clicked.connect(self.loadkey)
+        self.keyfile.setStyleSheet("background-color: #f8b7cd")
         self.keyfile2 = QPushButton("Download key")
         self.keyfile2.clicked.connect(self.savefile)
+        self.keyfile2.setStyleSheet("background-color: #f8b7cd")
         self.binaryfile = ''
         self.rotor1 = QLineEdit()
         self.rotor2 = QLineEdit()
         self.rotor3 = QLineEdit()
+        self.rotor1.setStyleSheet("background-color: white")
+        self.rotor2.setStyleSheet("background-color: white")
+        self.rotor3.setStyleSheet("background-color: white")
         self.displaykey = QPlainTextEdit()
         self.displaykey.setDisabled(True)
+        self.displaykey.setStyleSheet("background-color: white")
 
 
         
