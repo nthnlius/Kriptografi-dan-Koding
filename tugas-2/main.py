@@ -1,3 +1,4 @@
+from cProfile import label
 import sys
 import random
 import os.path
@@ -53,9 +54,9 @@ class MainWindow(QMainWindow):
         self.chooseinputfile.setStyleSheet("background-color: #f8b7cd")
         
         self.labelkey = QLabel("Key:")
-        self.inputkey = QLineEdit()
+        self.inputkey = QPlainTextEdit()
         self.inputkey.setStyleSheet("background-color: white")
-
+        
         self.keyfile = QPushButton("Choose key file")
         self.labelpath = QLabel("")
         self.keyfile.clicked.connect(self.loadkey)
@@ -64,6 +65,7 @@ class MainWindow(QMainWindow):
         self.keyfile2.clicked.connect(self.savefile)
         self.keyfile2.setStyleSheet("background-color: #f8b7cd")
 
+        
         self.labeloutput = QLabel("Output:")
         self.outputfield = QPlainTextEdit()
         self.outputfield.setReadOnly(True)
@@ -77,6 +79,8 @@ class MainWindow(QMainWindow):
         self.binaryfile = ''
         
         self.label4 = QLabel()
+        # key = bytearray(self.inputkey.toPlainText(), "UTF-8")
+        # rc4 = RC4(key)
         self.encrypt = QPushButton("Encrypt")
         self.encrypt.clicked.connect(self.encrypt_function)
         self.decrypt = QPushButton("Decrypt")
@@ -92,9 +96,9 @@ class MainWindow(QMainWindow):
         # self.rotor1.setStyleSheet("background-color: white")
         # self.rotor2.setStyleSheet("background-color: white")
         # self.rotor3.setStyleSheet("background-color: white")
-        self.displaykey = QPlainTextEdit()
-        self.displaykey.setDisabled(True)
-        self.displaykey.setStyleSheet("background-color: white")
+        # self.displaykey = QPlainTextEdit()
+        # self.displaykey.setDisabled(True)
+        # self.displaykey.setStyleSheet("background-color: white")
 
 
         
@@ -112,95 +116,106 @@ class MainWindow(QMainWindow):
 
         
 
-        self.ciphertype.currentIndexChanged.connect(self.changemenus)
+        # self.ciphertype.currentIndexChanged.connect(self.changemenus)
 
-        layout.addWidget(self.space)
-        layout.addWidget(self.label2)
-        layout.addWidget(self.inputfield)
-        layout.addWidget(self.choosefile)
-        layout.addWidget(self.labelpath)
-        layout.addWidget(self.label3)
-        layout.addWidget(self.outputfield)
-        layout.addWidget(self.choosefile2)
-        layout.addWidget(self.label4)
+        # layout.addWidget(self.space)
+        # layout.addWidget(self.label2)
+        # layout.addWidget(self.inputfield)
+        # layout.addWidget(self.choosefile)
+        # layout.addWidget(self.labelpath)
+        # layout.addWidget(self.label3)
+        # layout.addWidget(self.outputfield)
+        # layout.addWidget(self.choosefile2)
+        # layout.addWidget(self.label4)
 
         widget = QWidget()
-        hbox.addLayout(layout)
-        hbox.addWidget(self.stack)
+        # hbox.addLayout(layout)
+        # hbox.addWidget(self.stack)
         layoutall = QVBoxLayout()
-        layoutall.addWidget(self.label1)
-        layoutall.addWidget(self.ciphertype)
-        layoutall.addLayout(hbox)
+        layoutall.addWidget(self.labelinput)
+        layoutall.addWidget(self.inputfield)
+        layoutall.addWidget(self.chooseinputfile)
+        layoutall.addWidget(self.labelkey)
+        layoutall.addWidget(self.inputkey)
+        layoutall.addWidget(self.keyfile)
+        layoutall.addWidget(self.labelpath)
+        layoutall.addWidget(self.keyfile2)
+        layoutall.addWidget(self.labeloutput)
+        layoutall.addWidget(self.outputfield)
+        layoutall.addWidget(self.chooseoutputfile)
+        # layoutall.addWidget(self.ciphertype)
+        # layoutall.addLayout(hbox)
         layoutall.addWidget(self.encrypt)
         layoutall.addWidget(self.decrypt)
+        
         widget.setLayout(layoutall)
 
         # Set the central widget of the Window. Widget will expand
         # to take up all the space in the window by default.
         self.setCentralWidget(widget)
 
-    def layout1(self):
-        # Layout 1. Vigenere, Extended, Playfair Cipher
-        layout = QVBoxLayout()
-        layout.setContentsMargins(0, 32, 0, 0)
+    # def layout1(self):
+    #     # Layout 1. Vigenere, Extended, Playfair Cipher
+    #     layout = QVBoxLayout()
+    #     layout.setContentsMargins(0, 32, 0, 0)
         
-        labelkey = QLabel("Key:")
+    #     labelkey = QLabel("Key:")
         
-        layout.addWidget(labelkey)
-        layout.addWidget(self.key)
-        layout.setAlignment(Qt.AlignTop)
+    #     layout.addWidget(labelkey)
+    #     layout.addWidget(self.key)
+    #     layout.setAlignment(Qt.AlignTop)
         
-        self.stack1.setLayout(layout)
+    #     self.stack1.setLayout(layout)
 
-    def layout2(self):
-        # Layout 2. Enigma Cipher
-        layout = QVBoxLayout()
-        layout.setContentsMargins(0, 23, 0, 19)
-        
-
-        labelkey = QLabel("Rotor Key:")
-        layout.addWidget(labelkey)
-
-        layoutrotor = QHBoxLayout()
-
-        rotor1 = QVBoxLayout()
-        labelrotor1 = QLabel("Slow")
-        rotor1.addWidget(labelrotor1)
-        rotor1.addWidget(self.rotor1)
-
-        rotor2 = QVBoxLayout()
-        labelrotor2 = QLabel("Medium")
-        rotor2.addWidget(labelrotor2)
-        rotor2.addWidget(self.rotor2)
-
-        rotor3 = QVBoxLayout()
-        labelrotor3 = QLabel("Fast")
-        rotor3.addWidget(labelrotor3)
-        rotor3.addWidget(self.rotor3)
-
-        layoutrotor.addLayout(rotor1)
-        layoutrotor.addLayout(rotor2)
-        layoutrotor.addLayout(rotor3)
-
-        layout.addLayout(layoutrotor)
-        layout.setAlignment(Qt.AlignTop)
-        
-        self.stack2.setLayout(layout)
+    # def layout2(self):
+    #     # Layout 2. Enigma Cipher
+    #     layout = QVBoxLayout()
+    #     layout.setContentsMargins(0, 23, 0, 19)
         
 
-    def layout3(self):
-        # # Layout 3. One-time Pad
-        layout = QVBoxLayout()
-        layout.setContentsMargins(0, 32, 0, 0)
+    #     labelkey = QLabel("Rotor Key:")
+    #     layout.addWidget(labelkey)
 
-        labelkey = QLabel("Key:")
-        layout.addWidget(labelkey)
-        layout.addWidget(self.displaykey)
-        layout.addWidget(self.keyfile)
-        layout.addWidget(self.keyfile2)
-        layout.setAlignment(Qt.AlignTop)
+    #     layoutrotor = QHBoxLayout()
+
+    #     rotor1 = QVBoxLayout()
+    #     labelrotor1 = QLabel("Slow")
+    #     rotor1.addWidget(labelrotor1)
+    #     rotor1.addWidget(self.rotor1)
+
+    #     rotor2 = QVBoxLayout()
+    #     labelrotor2 = QLabel("Medium")
+    #     rotor2.addWidget(labelrotor2)
+    #     rotor2.addWidget(self.rotor2)
+
+    #     rotor3 = QVBoxLayout()
+    #     labelrotor3 = QLabel("Fast")
+    #     rotor3.addWidget(labelrotor3)
+    #     rotor3.addWidget(self.rotor3)
+
+    #     layoutrotor.addLayout(rotor1)
+    #     layoutrotor.addLayout(rotor2)
+    #     layoutrotor.addLayout(rotor3)
+
+    #     layout.addLayout(layoutrotor)
+    #     layout.setAlignment(Qt.AlignTop)
         
-        self.stack3.setLayout(layout)
+    #     self.stack2.setLayout(layout)
+        
+
+    # def layout3(self):
+    #     # # Layout 3. One-time Pad
+    #     layout = QVBoxLayout()
+    #     layout.setContentsMargins(0, 32, 0, 0)
+
+    #     labelkey = QLabel("Key:")
+    #     layout.addWidget(labelkey)
+    #     layout.addWidget(self.displaykey)
+    #     layout.addWidget(self.keyfile)
+    #     layout.addWidget(self.keyfile2)
+    #     layout.setAlignment(Qt.AlignTop)
+        
+    #     self.stack3.setLayout(layout)
         
 
     def loadkey(self):
@@ -210,133 +225,111 @@ class MainWindow(QMainWindow):
         if fileName:
             with open(fileName, 'r') as f:
                 content = f.read()
-                self.displaykey.setPlainText(content)
+                self.inputkey.setText(content)
 
-    def changemenus(self):
-        # Untuk ganti menu saat mengubah jenis cipher
-        index = self.ciphertype.currentIndex()
-        if index == 3:
-            self.stack.setCurrentIndex(1)
-        elif index == 4:
-            self.stack.setCurrentIndex(2)
-        else:
-            self.stack.setCurrentIndex(0)
+    # def changemenus(self):
+    #     # Untuk ganti menu saat mengubah jenis cipher
+    #     index = self.ciphertype.currentIndex()
+    #     if index == 3:
+    #         self.stack.setCurrentIndex(1)
+    #     elif index == 4:
+    #         self.stack.setCurrentIndex(2)
+    #     else:
+    #         self.stack.setCurrentIndex(0)
         
-        self.inputfield.clear()
-        self.outputfield.clear()
-        self.key.clear()
-        self.displaykey.clear()
+    #     self.inputfield.clear()
+    #     self.outputfield.clear()
+    #     self.key.clear()
+    #     self.displaykey.clear()
 
 
     def encrypt_function(self):
-        index = self.ciphertype.currentIndex()
-        inputtext = self.inputfield.toPlainText()
-        output = ''
+        key = bytearray(self.inputkey.toPlainText(), "UTF-8")
+        rc4 = RC4(key)
+        inputtext = bytearray(self.inputfield.toPlainText(), "UTF-8")
         isbinary = False
-        
-        if index == 0:
-            keytext = self.key.text()
-            output = vigenere(inputtext, keytext, True)
-        
-        elif index == 1:
-            keytext = self.key.text()
-            instring = []
+        instring = []
 
-            if os.path.exists(inputtext):
-                isbinary = True
-                with open(inputtext, 'rb') as f:
+        if os.path.exists(inputtext):
+            isbinary = True
+            with open(inputtext, 'rb') as f:
+                byte = f.read(1)
+                while byte:
+                    instring.append(int.from_bytes(byte, "big"))   
                     byte = f.read(1)
-                    while byte:
-                        instring.append(int.from_bytes(byte, "big"))   
-                        byte = f.read(1)
-                    encrypted = bytearray(extvigenere(instring, keytext, True))
-                    self.binaryfile = encrypted
-            else:
-                output = extvigenere(inputtext, keytext, True)
-                fileName, _ = QFileDialog.getSaveFileName(self, 'Save Output', 'output')
-                fname = open(fileName, 'wb')
-                fname.write(output)
-                fname.close()
-                self.savefile()
-                output = ''
+                encrypted = rc4.encrypt(inputtext)
+                self.binaryfile = encrypted
+        else:
+            temp = rc4.encrypt(inputtext)
+            output = temp.decode()
+            # fileName, _ = QFileDialog.getSaveFileName(self, 'Save Output', 'output')
+            # fname = open(fileName, 'wb')
+            # fname.write(output)
+            # fname.close()
+            # self.savefile()
+            # output = ''
 
         
-        elif index == 2:
-            keytext = self.key.text()
-            output = playfair(inputtext, keytext, True)
+        # elif index == 2:
+        #     keytext = self.key.text()
+        #     output = playfair(inputtext, keytext, True)
         
-        elif index == 3:
-            output = enigma(self.rotor3.text(), self.rotor2.text(), self.rotor1.text(), inputtext, True)
+        # elif index == 3:
+        #     output = enigma(self.rotor3.text(), self.rotor2.text(), self.rotor1.text(), inputtext, True)
 
-        elif index == 4:
-            output = otp(inputtext, True, self.displaykey.toPlainText())
-            with open("keyII4031Kirptografidankodingtapiadatypo.txt", 'r') as f:
-                content = f.read()
-                self.displaykey.setPlainText(content)
+        # elif index == 4:
+        #     output = otp(inputtext, True, self.displaykey.toPlainText())
+        #     with open("keyII4031Kirptografidankodingtapiadatypo.txt", 'r') as f:
+        #         content = f.read()
+        #         self.displaykey.setPlainText(content)
             
         # Tambah space jika opsi dipilih
-        if self.space.isChecked():
-            output = ' '.join(output[i:i+5] for i in range(0,len(output),5))
+        # if self.space.isChecked():
+        #     output = ' '.join(output[i:i+5] for i in range(0,len(output),5))
             
-        if index == 1 and isbinary:
+        if isbinary:
             output = 'Berkas telah diencrypt. Silakan unduh dengan tombol "Download"'
 
         self.outputfield.setPlainText(output)
 
     def decrypt_function(self):
-        index = self.ciphertype.currentIndex()
-        inputtext = self.inputfield.toPlainText()
-        output = ''
+        key = bytearray(self.inputkey.toPlainText(), "UTF-8")
+        rc4 = RC4(key)
+        inputtext = bytearray(self.inputfield.toPlainText(), "UTF-8")
         isbinary = False
-        
-        if index == 0:
-            keytext = self.key.text()
-            output = vigenere(inputtext, keytext, False)
-        
-        elif index == 1:
-            keytext = self.key.text()
-            instring = []
-            
-            if os.path.exists(inputtext):
-                with open(inputtext, 'rb') as f:
-                    isbinary = True
+        instring = []
+
+        if os.path.exists(inputtext):
+            isbinary = True
+            with open(inputtext, 'rb') as f:
+                byte = f.read(1)
+                while byte:
+                    instring.append(int.from_bytes(byte, "big"))   
                     byte = f.read(1)
-                    while byte:
-                        instring.append(int.from_bytes(byte, "big"))   
-                        byte = f.read(1)
-                    encrypted = bytearray(extvigenere(instring, keytext, False))
-                    self.binaryfile = encrypted
-            else:
-                output = extvigenere(inputtext, keytext, False)
-                fileName, _ = QFileDialog.getSaveFileName(self, 'Save Output', 'output')
-                fname = open(fileName, 'wb')
-                fname.write(output)
-                fname.close()
-                self.savefile()
-                output = ''
-        
-        elif index == 2:
-            keytext = self.key.text()
-            output = playfair(inputtext, keytext, False)
-        
-        elif index == 3:
-            output = enigma(self.rotor3.text(), self.rotor2.text(), self.rotor1.text(), inputtext, False)
+                encrypted = rc4.decrypt(inputtext)
+                self.binaryfile = encrypted
+        else:
+            temp = rc4.encrypt(inputtext)
+            output = temp.decode()
+            # fileName, _ = QFileDialog.getSaveFileName(self, 'Save Output', 'output')
+            # fname = open(fileName, 'wb')
+            # fname.write(output)
+            # fname.close()
+            # self.savefile()
+            # output = ''
 
-        elif index == 4:
-            output = otp(inputtext, False, self.displaykey.toPlainText())
-
-        if index == 1 and isbinary:
+        if isbinary:
             output = 'Berkas telah didecrypt. Silakan unduh dengan tombol "Download"'
 
         self.outputfield.setPlainText(output)
 
     def open(self):
         fileName = ''
-        index = self.ciphertype.currentIndex()
-        if index != 3:
-            fileName, _ = QFileDialog.getOpenFileName(self, 'File Input','.', "Text Files (*.txt)")
-        else:
-            fileName, _ = QFileDialog.getOpenFileName(self, 'File Input')
+        # index = self.ciphertype.currentIndex()
+        # if index != 3:
+        #     fileName, _ = QFileDialog.getOpenFileName(self, 'File Input','.', "Text Files (*.txt)")
+        # else:
+        fileName, _ = QFileDialog.getOpenFileName(self, 'File Input')
         content = ''
         if fileName:
             if fileName.endswith('.txt'):
@@ -348,8 +341,8 @@ class MainWindow(QMainWindow):
                 self.inputfield.setPlainText(fileName)
 
     def savefile(self):
-        index = self.ciphertype.currentIndex()
-        if index == 3 and os.path.exists(self.inputfield.toPlainText()):
+        # index = self.ciphertype.currentIndex()
+        if os.path.exists(self.inputfield.toPlainText()):
             fileName, _ = QFileDialog.getSaveFileName(self, 'Save Output', 'output')
             if(fileName):
                 output = self.binaryfile
