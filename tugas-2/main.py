@@ -31,28 +31,30 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("Tugas Kecil 2 II4031 Kriptografi dan Koding")
         self.setStyleSheet("font: 10pt Verdana;\n"
-                            "background-color: #f6d2e0")
+                            "background-color: #8ecae6")
         
+        self.labeltitle = QLabel("My Own Stream Cipher")
+        self.labeltitle.setStyleSheet("font: bold 12pt Verdana")
+        self.labelsubtitle = QLabel("By: Nathaniel & Nadya\n")
+        self.labelsubtitle.setStyleSheet("font: 12pt Verdana")
+
         self.labelinput = QLabel("Input:")
         self.inputfield = QPlainTextEdit()
         self.inputfield.setStyleSheet("background-color: white")
 
         self.chooseinputfile = QPushButton("Choose file")
-        self.labelpath = QLabel("")
         self.chooseinputfile.clicked.connect(self.open)
-        self.chooseinputfile.setStyleSheet("background-color: #f8b7cd")
+        self.chooseinputfile.setStyleSheet("background-color: #023047;\n"
+                                            "color: white")
         
         self.labelkey = QLabel("Key:")
         self.inputkey = QPlainTextEdit()
         self.inputkey.setStyleSheet("background-color: white")
         
-        self.keyfile = QPushButton("Choose key file")
-        self.labelpath = QLabel("")
-        self.keyfile.clicked.connect(self.loadkey)
-        self.keyfile.setStyleSheet("background-color: #f8b7cd")
-        self.keyfile2 = QPushButton("Download key")
-        self.keyfile2.clicked.connect(self.savefile)
-        self.keyfile2.setStyleSheet("background-color: #f8b7cd")
+        self.keyfile = QPushButton("Download key")
+        self.keyfile.clicked.connect(self.savefile)
+        self.keyfile.setStyleSheet("background-color: #023047;\n"
+                                    "color: white")
 
         
         self.labeloutput = QLabel("Output:")
@@ -62,7 +64,8 @@ class MainWindow(QMainWindow):
 
         self.chooseoutputfile = QPushButton("Download")
         self.chooseoutputfile.clicked.connect(self.savefile)
-        self.chooseoutputfile.setStyleSheet("background-color: #f8b7cd")
+        self.chooseoutputfile.setStyleSheet("background-color: #023047;\n"
+                                            "color: white")
 
         #Extrafields
         self.binaryfile = ''
@@ -73,19 +76,19 @@ class MainWindow(QMainWindow):
         self.decrypt = QPushButton("Decrypt")
         self.decrypt.clicked.connect(self.decrypt_function)
 
-        self.encrypt.setStyleSheet("background-color : #67a3d9")
-        self.decrypt.setStyleSheet("background-color : #67a3d9")
+        self.encrypt.setStyleSheet("background-color : #fb8500")
+        self.decrypt.setStyleSheet("background-color : #ffb703")
 
         widget = QWidget()
         layoutall = QVBoxLayout()
+        layoutall.addWidget(self.labeltitle)
+        layoutall.addWidget(self.labelsubtitle)
         layoutall.addWidget(self.labelinput)
         layoutall.addWidget(self.inputfield)
         layoutall.addWidget(self.chooseinputfile)
         layoutall.addWidget(self.labelkey)
         layoutall.addWidget(self.inputkey)
         layoutall.addWidget(self.keyfile)
-        layoutall.addWidget(self.labelpath)
-        layoutall.addWidget(self.keyfile2)
         layoutall.addWidget(self.labeloutput)
         layoutall.addWidget(self.outputfield)
         layoutall.addWidget(self.chooseoutputfile)
@@ -94,16 +97,6 @@ class MainWindow(QMainWindow):
         
         widget.setLayout(layoutall)
         self.setCentralWidget(widget)
-
-
-    def loadkey(self):
-        fileName, _ = QFileDialog.getOpenFileName(self, 'Load Key','.', "Text Files (*.txt)")
-        content = ''
-        # File txt
-        if fileName:
-            with open(fileName, 'r') as f:
-                content = f.read()
-                self.inputkey.setText(content)
 
     def encrypt_function(self):
         key = bytearray(self.inputkey.toPlainText(), "UTF-8")
@@ -119,12 +112,12 @@ class MainWindow(QMainWindow):
                 while byte:
                     instring.append(int.from_bytes(byte, "big"))   
                     byte = f.read(1)
-                encrypted = rc4.encrypt(inputtext)
+                encrypted = rc4.encrypt(instring)
                 self.binaryfile = encrypted
         else:
-            encryptedtext = bytearray(self.inputfield.toPlainText(), "UTF-8")
-            temp = rc4.encrypt(inputtext)
-            output = temp.decode()
+            encryptedtext = bytearray(self.inputfield.toPlainText(), "ANSI")
+            temp = rc4.encrypt(encryptedtext)
+            output = temp.decode("ANSI")
             
         if isbinary:
             output = 'Berkas telah diencrypt. Silakan unduh dengan tombol "Download"'
@@ -134,7 +127,7 @@ class MainWindow(QMainWindow):
     def decrypt_function(self):
         key = bytearray(self.inputkey.toPlainText(), "UTF-8")
         rc4 = RC4(key)
-        inputtext = bytearray(self.inputfield.toPlainText(), "UTF-8")
+        inputtext = self.inputfield.toPlainText()
         isbinary = False
         instring = []
 
@@ -145,11 +138,12 @@ class MainWindow(QMainWindow):
                 while byte:
                     instring.append(int.from_bytes(byte, "big"))   
                     byte = f.read(1)
-                encrypted = rc4.decrypt(inputtext)
+                encrypted = rc4.decrypt(instring)
                 self.binaryfile = encrypted
         else:
-            temp = rc4.encrypt(inputtext)
-            output = temp.decode()
+            tobedecrypted = bytearray(inputtext, "ANSI")
+            temp = rc4.encrypt(tobedecrypted)
+            output = temp.decode("ANSI")
 
         if isbinary:
             output = 'Berkas telah didecrypt. Silakan unduh dengan tombol "Download"'
@@ -160,6 +154,7 @@ class MainWindow(QMainWindow):
         fileName = ''
         fileName, _ = QFileDialog.getOpenFileName(self, 'File Input')
         content = ''
+        self.outputfield.clear()
         if fileName:
             if fileName.endswith('.txt'):
                # File txt
@@ -170,7 +165,6 @@ class MainWindow(QMainWindow):
                 self.inputfield.setPlainText(fileName)
 
     def savefile(self):
-        # index = self.ciphertype.currentIndex()
         if os.path.exists(self.inputfield.toPlainText()):
             fileName, _ = QFileDialog.getSaveFileName(self, 'Save Output', 'output')
             if(fileName):
@@ -188,6 +182,7 @@ class MainWindow(QMainWindow):
 
 app = QApplication(sys.argv)
 window = MainWindow()
+window.resize(800,800)
 window.show()
 
 app.exec()
