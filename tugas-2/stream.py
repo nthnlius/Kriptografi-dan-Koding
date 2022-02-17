@@ -27,7 +27,7 @@ class RC4:
         j = 0
         C = []
         key = self.__S.copy()
-        A= ''
+        A = ''
         for i, m in enumerate(message):
             i = (i + 1) % 256
             j = (j + key[i]) % 256
@@ -43,8 +43,10 @@ class RC4:
     def __LFSR(self, key: bytearray, u: int) -> int:
         x = key.pop()
         out = x ^ u
-        key.append(out)
-        return out
+        for i in range(255,0) :
+            key[i] = key[i-1]
+        key[0] = out
+        return x
     
     def encrypt(self, plaintext: bytearray) -> bytearray:
         return self.__PRGA(plaintext)
