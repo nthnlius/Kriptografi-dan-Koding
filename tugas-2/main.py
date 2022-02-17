@@ -108,7 +108,7 @@ class MainWindow(QMainWindow):
     def encrypt_function(self):
         key = bytearray(self.inputkey.toPlainText(), "UTF-8")
         rc4 = RC4(key)
-        inputtext = bytearray(self.inputfield.toPlainText(), "UTF-8")
+        inputtext = self.inputfield.toPlainText()
         isbinary = False
         instring = []
 
@@ -122,6 +122,7 @@ class MainWindow(QMainWindow):
                 encrypted = rc4.encrypt(inputtext)
                 self.binaryfile = encrypted
         else:
+            encryptedtext = bytearray(self.inputfield.toPlainText(), "UTF-8")
             temp = rc4.encrypt(inputtext)
             output = temp.decode()
             
