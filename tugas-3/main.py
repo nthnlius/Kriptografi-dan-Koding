@@ -137,33 +137,29 @@ class MainWindow(QMainWindow):
         self.genkey.setText("Generated!")
 
     def encrypt_function(self):
-        instring = []
         inputtext = self.inputfield.toPlainText()
 
         with open(inputtext, 'rb') as f:
-            byte = f.read(1)
-            while byte:
-                instring.append(int.from_bytes(byte, "big"))   
-                byte = f.read(1)
+            byte = f.read()
+            input_size = len(byte)
             start_time = time()
-            encrypted = RSA.encrypt(instring)
+            encrypted = RSA.encrypt(inputtext)
             end_time = time()
             self.outpputtime = "Time taken for encrypting : ", (end_time - start_time), "seconds"
+            self.outputsize = "Size of plaintext file: ", (input_size * 16), " bytes"
             self.outputfield = encrypted
 
     def decrypt_function(self):
-        instring = []
         inputtext = self.inputfield.toPlainText()
 
         with open(inputtext, 'rb') as f:
-            byte = f.read(1)
-            while byte:
-                instring.append(int.from_bytes(byte, "big"))   
-                byte = f.read(1)
+            byte = f.read()
+            input_size = len(byte)
             start_time = time()
-            decrypted = RSA.decrypt(instring)
+            decrypted = RSA.decrypt(inputtext)
             end_time = time()
             self.outpputtime = "Time taken for decrypting : ", (end_time - start_time), "seconds"
+            self.outputsize = "Size of plaintext file: ", (input_size / 16), " bytes"
             self.outputfield = decrypted
 
     def open_input(self):
@@ -184,18 +180,37 @@ class MainWindow(QMainWindow):
         fileName = ''
         fileName, _ = QFileDialog.getOpenFileName(self, 'File Key')
         content = ''
+        d = ''
+        e =''
+        n = ''
+        i = 6
         self.outputfield.clear()
         if fileName:
             if fileName.endswith('.pri'):
                with open(fileName, 'r', encoding='ISO-8859-1') as f:
-                   content = f.read()  
-                   RSA.d = content
-                   RSA.n = content
+                    content = f.read()
+                    while content[i] != ',':
+                        d += content[i]
+                        i += 1
+                    i += 7
+                    while content[i] != '}':
+                        n += content[i]
+                        i += 1
+                    RSA.d = d
+                    RSA.n = n
             elif fileName.endswith('.pub'):
-               with open(fileName, 'r', encoding='ISO-8859-1') as f:
-                   content = f.read()
-                   RSA.e = content
-                   RSA.n = content                
+                with open(fileName, 'r', encoding='ISO-8859-1') as f:
+                    content = f.read()
+                    while content[i] != ',':
+                        e += content[i]
+                        i += 1
+                    i += 7
+                    while content[i] != '}':
+                        n += content[i]
+                        i += 1 
+                    RSA.e = e
+                    RSA.n = n
+                              
 
     def savefile(self):
         fileName, _ = QFileDialog.getSaveFileName(self, 'Save Output', 'output')
