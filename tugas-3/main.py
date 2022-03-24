@@ -48,10 +48,28 @@ class MainWindow(QMainWindow):
         self.inputfield.setStyleSheet("background-color: white")
         
         self.label1 = QLabel(" ")
-        self.labelkey = QLabel("Key:")
+        layoutkey = QVBoxLayout()
+        self.labelkey = QLabel("e or d:")
         self.inputkey = QPlainTextEdit()
         self.inputkey.setStyleSheet("background-color: white")
-        
+        layoutkey.addWidget(self.labelkey)
+        layoutkey.addWidget(self.inputkey)
+
+        layoutn = QVBoxLayout()
+        self.labeln = QLabel("n:")
+        self.inputn = QPlainTextEdit()
+        self.inputn.setStyleSheet("background-color: white")
+        layoutn.addWidget(self.labeln)
+        layoutn.addWidget(self.inputn)
+
+        self.stack1 = QWidget()
+        self.stack1.setLayout(layoutkey)
+        self.stack2 = QWidget()
+        self.stack2.setLayout(layoutn)
+        layouth = QHBoxLayout()
+        layouth.addWidget(self.stack1)
+        layouth.addWidget(self.stack2)
+
         self.keyfile = QPushButton("Choose key file")
         self.keyfile.clicked.connect(self.open_key)
         self.keyfile.setStyleSheet("background-color: #023047;\n"
@@ -92,8 +110,10 @@ class MainWindow(QMainWindow):
         layoutall.addWidget(self.chooseinputfile)
         layoutall.addWidget(self.inputfield)
         layoutall.addWidget(self.label1)
-        layoutall.addWidget(self.labelkey)
-        layoutall.addWidget(self.inputkey)
+
+        self.stack = QWidget()
+        self.stack.setLayout(layouth)
+        layoutall.addWidget(self.stack)
         layoutall.addWidget(self.keyfile)
         layoutall.addWidget(self.label2)
         layoutall.addWidget(self.labelgen)
