@@ -66,30 +66,30 @@ class RSA:
         return d
     def encrypt(self, message:bytearray):
         ciphertext = []
-        print("encrypting message : ", message)
+        # print("encrypting message : ", message)
         for byt in message :
-            byte = ord(byt)
+            byte = byt
             # print (byte)
             ciphermsg = pow(byte, self.e, self.n)
             ciphertext.append(ciphermsg)
+        # for i in range (len(ciphertext)):
+            # print (hex(ciphertext[i]))
         return ciphertext
     def decrypt (self, ciphermsg : bytearray):
         plaintext = []
         plaintxt = ''
-        # for byte in ciphermsg:
-        #     plainmsg = (pow(byte, self.d, self.n))
-        #     plaintext.append(plainmsg)
-        for i in range (0, len(ciphermsg)//32, 32):
+        # print (ciphermsg)
+        for i in range (0, len(ciphermsg)//32):
             # print (ciphertext[i])
             text9 = ciphertext[i*32:i*32+32]
             # print("text : ", text9)
-        for i in range (len(text9)):
-            plainmsg = pow(text9[i], self.d, self.n)
-            plaintext.append(plainmsg)
-            plaintxt+=chr(plainmsg)
-        print (plaintxt)
+            for i in range (len(text9)):
+                plainmsg = pow(text9[i], self.d, self.n)
+                plaintext.append(plainmsg)
+                plaintxt+=chr(plainmsg)
+        # print (plaintxt)
         
-        return (plaintext)
+        return (plaintxt)
 
 def nextPrime(x):
     nextprime = x + 1
@@ -111,7 +111,13 @@ def exp2(a:int , b:int)-> int :
         else :
             return x*x*a
 rsa = RSA()
-plaintext = "ASU" #19
+with open("main.py", "rb")as f:
+    plaintxt = f.read()
+# print (type(plaintxt))
+plaintext = bytearray(plaintxt)
+# plaintxt = "STI SEMESTER 6 KEK ORANG GILA ANJ" #19
+# plaintext = bytearray(plaintxt, encoding="iso8859")
+# plaintext = bytearray(plaintxt)
 print ("panjang plaintext : ",len(plaintext))
 ciphertext = rsa.encrypt(plaintext)
 nani = ""
@@ -132,12 +138,17 @@ for i in range (len (ciphertext)):
     # print (" text2 : ", text2)
     
 enc = bytearray(nani, encoding = "iso8859")
-filename = "main.py"
-f = open(filename, "wb")
+
+f = open("encrypted.txt", "wb")
 f.write(enc)
 
-f = open(filename, "rb")
+f = open("encrypted.txt", "rb")
 dec = f.read()
+# print (type(dec))
 decs = bytearray(dec)
+print("panjang ciphertext : ", len(decs))
 plntxt = rsa.decrypt(decs)
-# print (plntxt)
+# plintxt = bytearray(plntxt, encoding="iso8859")
+# rr= open("arsars.txt", "wb")
+# rr.write(plintxt)
+print (plntxt)
