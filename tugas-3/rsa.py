@@ -1,6 +1,8 @@
 '''program ini diciptakan untuk mencoba melakukan enkripsi menggunakan RSA'''
 from time import time
 from math import ceil, floor, sqrt, gcd, log
+from typing import Tuple
+import sympy
 def isPrime(rndint) -> bool:
     if rndint>=10 :
         for i in range (2, ceil(sqrt(rndint))+1):
@@ -13,7 +15,7 @@ def isPrime(rndint) -> bool:
                 return False
         return True
     else :
-        return None
+        return isPrime((rndint)*(-1))
 class RSA:
     def __init__(self, p : int, q:int):
         self.p = p
@@ -22,27 +24,15 @@ class RSA:
         self.d = 0
         self.n = self.p*self.q
         self.tot = (self.p-1) * (self.q-1)
-
-                
-
+    
     def isEallowed(self, e)-> bool:
         if (isPrime(self.p) and isPrime(self.q)):
             return gcd(e, self.tot) == 1
     def generateE(self)->None:
-        if (isPrime(self.p) and isPrime(self.q)):
-            
-            tot = (self.p-1)*(self.q-1)
-            count = 0
-            i=10**(len(str(self.tot))-1)
-            print ("=====================================================")
-            print ("This is the allowed e : ")
-            while (count < 50 and i < self.p*self.q):
-                print (i)
-                if(self.isEallowed(i)):
-                    count +=1
-                    print (i)
-                i +=1
-            print ("====================================================")
+        randnum = sympy.randprime(2**63, 2**64-1)
+        while (gcd(randnum, self.tot)!=1):
+            randnum = sympy.randprime(2**63, 2**64-1)
+        self.e = randnum
     ''' rumus : d = (1+k*tot)/e'''
     def setE(self,num):
         if (self.isEallowed(num)):
@@ -52,14 +42,10 @@ class RSA:
             print("You have chosen the wrong E")
 
     def generateD(self)-> int:
-        if (self.isEallowed(self.e)):
-            d = pow(self.e, -1, self.tot)
-            print("d has been set to : ", d)
-            self.d = d
-            return d
-        else :
-            print("no d has been set")
-            return 0
+        d = pow(self.e, -1, self.tot)
+        print("d has been set to : ", d)
+        self.d = d
+        return d
     def encrypt(self, message:bytearray):
         ciphertext = []
         start_time = time()
@@ -101,3 +87,34 @@ def exp2(a:int , b:int)-> int :
             return x*x
         else :
             return x*x*a
+
+rsa1 = RSA(sympy.randprime(2**63, 2**64-1), sympy.randprime(2**63, 2**64-1))
+rsa1.generateE()
+rsa1.generateD()
+print (rsa1.e)
+print(rsa1.d)
+print(rsa1.n)
+print(rsa1.tot)
+ciphertext = rsa1.encrypt("yaolo")
+nani = ''
+check =[]
+f = open("encrypted.txt", "wb")
+# enc = bytearray(ciphertext)
+for i in range (len (ciphertext)):
+    text = hex(ciphertext[i])
+    print (text)
+    for j in range (1, len(text)//2):
+        euy = text[j*2 :j*2+2] #euy mengambil tiap bytes dalam text.
+        ahh = int(euy, 16) #ahh mengubah euy dari heksadesimal jadi integer
+        nani+=(chr(ahh))
+        check.append(ahh)
+    
+enc = bytearray(nani, encoding = "iso8859")
+# for ii in range (len(check)):
+    # print (hex(check[ii]))
+f.write(enc)
+    # print (euy)
+    # hexad = text[2:4]
+    # print(type(euy))
+    # for i in range (2, len(text), 2):
+    #     nani = byte()
