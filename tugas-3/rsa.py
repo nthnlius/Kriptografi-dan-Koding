@@ -3,6 +3,7 @@ from time import time
 from math import ceil, floor, sqrt, gcd, log
 from typing import Tuple
 import sympy
+import sys
 import json
 def isPrime(rndint) -> bool:
     if rndint>=10 :
@@ -66,28 +67,35 @@ class RSA:
         return d
     def encrypt(self, message:bytearray):
         ciphertext = []
-        # print("encrypting message : ", message)
+
         for byt in message :
             byte = byt
             # print (byte)
             ciphermsg = pow(byte, self.e, self.n)
             ciphertext.append(ciphermsg)
+        print (ciphertext)
         # for i in range (len(ciphertext)):
             # print (hex(ciphertext[i]))
         return ciphertext
     def decrypt (self, ciphermsg : bytearray):
         plaintext = []
         plaintxt = ''
-        # print (ciphermsg)
-        for i in range (0, len(ciphermsg)//32):
-            # print (ciphertext[i])
-            text9 = ciphertext[i*32:i*32+32]
-            # print("text : ", text9)
-            for i in range (len(text9)):
-                plainmsg = pow(text9[i], self.d, self.n)
-                plaintext.append(plainmsg)
-                plaintxt+=chr(plainmsg)
-        # print (plaintxt)
+        print(len(ciphermsg))
+        for i in range (0, len(ciphermsg), 16):
+            print ("i :", i)
+            print ("ciphermsg : ", ciphermsg)
+            ciphertext = bytearray(ciphermsg)
+            # print(type(ciphertext)) mengeluarkan bytearray
+            text9 = int.from_bytes(ciphertext[i:i+16], byteorder="big", signed=False)
+            # print ("aaa" , ciphertext[i*16:i*16+16])
+            print(f'hex: {hex(text9)}')
+            print("text : ", text9)
+            # for j in range (len(text9)):
+            plainmsg = pow(text9, self.d, self.n)
+            print("plainmsg : ", plainmsg)
+            plaintext.append(plainmsg)
+            plaintxt+=chr(plainmsg)
+        print (plaintxt)
         
         return (plaintxt)
 
@@ -110,45 +118,29 @@ def exp2(a:int , b:int)-> int :
             return x*x
         else :
             return x*x*a
-rsa = RSA()
-with open("main.py", "rb")as f:
-    plaintxt = f.read()
-# print (type(plaintxt))
-plaintext = bytearray(plaintxt)
-# plaintxt = "STI SEMESTER 6 KEK ORANG GILA ANJ" #19
-# plaintext = bytearray(plaintxt, encoding="iso8859")
-# plaintext = bytearray(plaintxt)
-print ("panjang plaintext : ",len(plaintext))
-ciphertext = rsa.encrypt(plaintext)
-nani = ""
-check=[]
-for i in range (len (ciphertext)):
-    text = hex(ciphertext[i])
-    if (len(text)< 34):
-        # print (text[0:2])
-        text2 = text[0:2]+('0'*(34-len(text)))+text[2:len(text)]
-    else :
-        text2 = text
-    for j in range (1, len(text2)//2):
-        euy = text2[j*2 :j*2+2] #euy mengambil tiap bytes dalam text.
-        ahh = int(euy, 16) #ahh mengubah euy dari heksadesimal jadi integer
-        nani+=(chr(ahh))
-        check.append(ahh)
-    # print ("len2 : ", len(text2))
-    # print (" text2 : ", text2)
-    
-enc = bytearray(nani, encoding = "iso8859")
 
-f = open("encrypted.txt", "wb")
-f.write(enc)
-
-f = open("encrypted.txt", "rb")
-dec = f.read()
-# print (type(dec))
-decs = bytearray(dec)
-print("panjang ciphertext : ", len(decs))
-plntxt = rsa.decrypt(decs)
-# plintxt = bytearray(plntxt, encoding="iso8859")
-# rr= open("arsars.txt", "wb")
-# rr.write(plintxt)
-print (plntxt)
+# rsa=RSA()
+# fileName = "/home/hydroxideacid/kuliah/kripto/tugas/tugas-3/output"
+# with open("ASU.txt", "rb") as f :
+#     fileraw = f.read()
+# ciphertext = rsa.encrypt(fileraw)
+# nani = ""
+# check=[]
+# for i in range (len (ciphertext)):
+#     text = hex(ciphertext[i])
+#     if (len(text)< 34):
+#         # print (text[0:2])
+#         text2 = text[0:2]+('0'*(34-len(text)))+text[2:len(text)]
+#     else :
+#         text2 = text
+#     for j in range (1, len(text2)//2):
+#         euy = text2[j*2 :j*2+2] #euy mengambil tiap bytes dalam text.
+#         ahh = int(euy, 16) #ahh mengubah euy dari heksadesimal jadi integer
+#         nani+=(chr(ahh))
+#         check.append(ahh)
+# with open(fileName, "rb") as f:
+#     file = f.read()
+# ciphertext = rsa.decrypt(file)
+#72074772781006188336026735860538711311
+#72074772781006188336062764657557675279
+#0x363918a7fe74fc1f3b20f0695cec9d0f

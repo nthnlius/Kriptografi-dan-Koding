@@ -94,6 +94,8 @@ class MainWindow(QMainWindow):
         self.saveoutput.clicked.connect(self.savefile)
         self.saveoutput.setStyleSheet("background-color: #023047;\n"
                                             "color: white")
+
+        self.orioutput = QPlainTextEdit()
         
         self.encrypt = QPushButton("Encrypt")
         self.encrypt.clicked.connect(self.encrypt_function)
@@ -129,11 +131,9 @@ class MainWindow(QMainWindow):
         
         widget.setLayout(layoutall)
         self.setCentralWidget(widget)
-
+        self.rsa = RSA()
+        
     def gen(self):
-        rsa = RSA(sympy.randprime(2**63, 2**64-1), sympy.randprime(2**63, 2**64-1))
-        rsa.generateE()
-        rsa.generateD()
         self.genkey.setText("Generated!")
 
     def encrypt_function(self):
@@ -141,13 +141,25 @@ class MainWindow(QMainWindow):
 
         with open(inputtext, 'rb') as f:
             byte = f.read()
-            input_size = len(byte)
-            start_time = time()
-            encrypted = RSA.encrypt(inputtext)
-            end_time = time()
-            self.outpputtime = "Time taken for encrypting : ", (end_time - start_time), "seconds"
-            self.outputsize = "Size of plaintext file: ", (input_size * 16), " bytes"
-            self.outputfield = encrypted
+        input_size = len(byte)
+        start_time = time()
+        encrypted = self.rsa.encrypt(byte)
+        end_time = time()
+        self.outputtime.setText("Time taken for encrypting : " + str(end_time - start_time) + "seconds")
+        self.outputsize.setText ("Size of plaintext file: "+ str(input_size * 16) + " bytes")
+        nani = ""
+        for i in range (len (encrypted)):
+            text = hex(encrypted[i])
+            if (len(text)< 34):
+                text2 = text[0:2]+('0'*(34-len(text)))+text[2:len(text)]
+            else :
+                text2 = text
+            for j in range (1, len(text2)//2):
+                euy = text2[j*2 :j*2+2] #euy mengambil tiap bytes dalam text.
+                ahh = int(euy, 16) #ahh mengubah euy dari heksadesimal jadi integer
+                nani+=(chr(ahh))
+        self.outputfield.setPlainText(text2)
+        self.orioutput.setPlainText(nani)
 
     def decrypt_function(self):
         inputtext = self.inputfield.toPlainText()
@@ -156,11 +168,11 @@ class MainWindow(QMainWindow):
             byte = f.read()
             input_size = len(byte)
             start_time = time()
-            decrypted = RSA.decrypt(inputtext)
+            decrypted = self.rsa.decrypt(byte)
             end_time = time()
-            self.outpputtime = "Time taken for decrypting : ", (end_time - start_time), "seconds"
-            self.outputsize = "Size of plaintext file: ", (input_size / 16), " bytes"
-            self.outputfield = decrypted
+            self.outputtime.setText("Time taken for decrypting : " + str(end_time - start_time) + "seconds")
+            self.outputsize.setText("Size of plaintext file:" + str(input_size / 16) + " bytes")
+            self.outputfield.setPlainText(decrypted)
 
     def open_input(self):
         fileName = ''
@@ -172,7 +184,7 @@ class MainWindow(QMainWindow):
                # File txt
                with open(fileName, 'r', encoding='ISO-8859-1') as f:
                    content = f.read()
-                   self.inputfield.setPlainText(content)
+                   self.inputfield.setPlainText(fileName)
             else:
                 self.inputfield.setPlainText(fileName)
 
@@ -189,23 +201,28 @@ class MainWindow(QMainWindow):
             if fileName.endswith('.pri'):
                 f = open(fileName)
                 private = json.load(f)
-                RSA.d = private['d']
-                RSA.n = private['n']
+                self.rsa.d = private['d']
+                self.rsa.n = private['n']
                 f.close()
+                self.inputkey.setPlainText(str(self.rsa.d))
+                self.inputn.setPlainText(str(self.rsa.n))
             elif fileName.endswith('.pub'):
                 f = open(fileName)
                 public = json.load(f)
-                RSA.e = public['e']
-                RSA.n = public['n']
+                self.rsa.e = public['e']
+                self.rsa.n = public['n']
                 f.close()
+                self.inputkey.setPlainText(str(self.rsa.e))
+                self.inputn.setPlainText(str(self.rsa.n))
                               
 
     def savefile(self):
         fileName, _ = QFileDialog.getSaveFileName(self, 'Save Output', 'output')
         if(fileName):
-            output = self.outputfield
+            output = self.orioutput.toPlainText()
+            output2 = bytearray(output, encoding="iso8859")
             fname = open(fileName, 'wb')
-            fname.write(output)
+            fname.write(output2)
             fname.close()
 
 app = QApplication(sys.argv)
