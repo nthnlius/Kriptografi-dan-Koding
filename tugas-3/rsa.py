@@ -3,6 +3,7 @@ from time import time
 from math import ceil, floor, sqrt, gcd, log
 from typing import Tuple
 import sympy
+import json
 def isPrime(rndint) -> bool:
     if rndint>=10 :
         for i in range (2, ceil(sqrt(rndint))+1):
@@ -17,13 +18,30 @@ def isPrime(rndint) -> bool:
     else :
         return isPrime((rndint)*(-1))
 class RSA:
-    def __init__(self, p : int, q:int):
-        self.p = p
-        self.q = q
-        self.e = 0
-        self.d = 0
-        self.n = self.p*self.q
-        self.tot = (self.p-1) * (self.q-1)
+    def __init__(self):
+        try :
+            with open("RSA-NN.pub", "r")as r:
+                pubkey = json.load(r)
+                self.e = pubkey['e']
+                self.n = pubkey['n']
+            with open("RSA-NN.pri", "r")as r:
+                prikey = json.load(r)
+                self.d = prikey['d']
+        except FileNotFoundError :
+            p = sympy.randprime(2**63, 2**64-1)
+            q = sympy.randprime(2**63, 2**64-1)
+            while p==q :
+                q = sympy.randprime(2**63, 2**64-1)
+            self.n = p*q
+            self.tot = (p-1)*(q-1)
+            self.generateE()
+            self.generateD()
+            tup = {'d':self.d, 'n':self.n}
+            with open("RSA-NN.pri" , "w")as f:
+                json.dump(tup, f)
+            tup = {'e':self.e, 'n':self.n}
+            with open ("RSA-NN.pub", "w")as f:
+                json.dump(tup, f)
     
     def isEallowed(self, e)-> bool:
         if (isPrime(self.p) and isPrime(self.q)):
@@ -48,24 +66,29 @@ class RSA:
         return d
     def encrypt(self, message:bytearray):
         ciphertext = []
-        start_time = time()
         print("encrypting message : ", message)
         for byt in message :
             byte = ord(byt)
             # print (byte)
             ciphermsg = pow(byte, self.e, self.n)
             ciphertext.append(ciphermsg)
-        end_time=time()
-        print("Time taken for encrypting : ", (end_time - start_time), "seconds")
         return ciphertext
     def decrypt (self, ciphermsg : bytearray):
         plaintext = []
-        start_time = time()
-        for byte in ciphermsg:
-            plainmsg = (pow(byte, self.d, self.n))
+        plaintxt = ''
+        # for byte in ciphermsg:
+        #     plainmsg = (pow(byte, self.d, self.n))
+        #     plaintext.append(plainmsg)
+        for i in range (0, len(ciphermsg)//32, 32):
+            # print (ciphertext[i])
+            text9 = ciphertext[i*32:i*32+32]
+            # print("text : ", text9)
+        for i in range (len(text9)):
+            plainmsg = pow(text9[i], self.d, self.n)
             plaintext.append(plainmsg)
-        end_time=time()
-        print("Time taken for decrypting : ", (end_time - start_time), "seconds")
+            plaintxt+=chr(plainmsg)
+        print (plaintxt)
+        
         return (plaintext)
 
 def nextPrime(x):
@@ -87,34 +110,34 @@ def exp2(a:int , b:int)-> int :
             return x*x
         else :
             return x*x*a
-
-rsa1 = RSA(sympy.randprime(2**63, 2**64-1), sympy.randprime(2**63, 2**64-1))
-rsa1.generateE()
-rsa1.generateD()
-print (rsa1.e)
-print(rsa1.d)
-print(rsa1.n)
-print(rsa1.tot)
-ciphertext = rsa1.encrypt("yaolo")
-nani = ''
-check =[]
-f = open("encrypted.txt", "wb")
-# enc = bytearray(ciphertext)
+rsa = RSA()
+plaintext = "ASU" #19
+print ("panjang plaintext : ",len(plaintext))
+ciphertext = rsa.encrypt(plaintext)
+nani = ""
+check=[]
 for i in range (len (ciphertext)):
     text = hex(ciphertext[i])
-    print (text)
-    for j in range (1, len(text)//2):
-        euy = text[j*2 :j*2+2] #euy mengambil tiap bytes dalam text.
+    if (len(text)< 34):
+        # print (text[0:2])
+        text2 = text[0:2]+('0'*(34-len(text)))+text[2:len(text)]
+    else :
+        text2 = text
+    for j in range (1, len(text2)//2):
+        euy = text2[j*2 :j*2+2] #euy mengambil tiap bytes dalam text.
         ahh = int(euy, 16) #ahh mengubah euy dari heksadesimal jadi integer
         nani+=(chr(ahh))
         check.append(ahh)
+    # print ("len2 : ", len(text2))
+    # print (" text2 : ", text2)
     
 enc = bytearray(nani, encoding = "iso8859")
-# for ii in range (len(check)):
-    # print (hex(check[ii]))
+filename = "main.py"
+f = open(filename, "wb")
 f.write(enc)
-    # print (euy)
-    # hexad = text[2:4]
-    # print(type(euy))
-    # for i in range (2, len(text), 2):
-    #     nani = byte()
+
+f = open(filename, "rb")
+dec = f.read()
+decs = bytearray(dec)
+plntxt = rsa.decrypt(decs)
+# print (plntxt)
