@@ -187,29 +187,17 @@ class MainWindow(QMainWindow):
         self.outputfield.clear()
         if fileName:
             if fileName.endswith('.pri'):
-               with open(fileName, 'r', encoding='ISO-8859-1') as f:
-                    content = f.read()
-                    while content[i] != ',':
-                        d += content[i]
-                        i += 1
-                    i += 7
-                    while content[i] != '}':
-                        n += content[i]
-                        i += 1
-                    RSA.d = d
-                    RSA.n = n
+                f = open(fileName)
+                private = json.load(f)
+                RSA.d = private['d']
+                RSA.n = private['n']
+                f.close()
             elif fileName.endswith('.pub'):
-                with open(fileName, 'r', encoding='ISO-8859-1') as f:
-                    content = f.read()
-                    while content[i] != ',':
-                        e += content[i]
-                        i += 1
-                    i += 7
-                    while content[i] != '}':
-                        n += content[i]
-                        i += 1 
-                    RSA.e = e
-                    RSA.n = n
+                f = open(fileName)
+                public = json.load(f)
+                RSA.e = public['e']
+                RSA.n = public['n']
+                f.close()
                               
 
     def savefile(self):
