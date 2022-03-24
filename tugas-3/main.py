@@ -69,7 +69,7 @@ class MainWindow(QMainWindow):
         self.outputfield = QPlainTextEdit()
         self.outputfield.setReadOnly(True)
         self.outputfield.setStyleSheet("background-color: white")
-        self.outpputtime = QLabel("")
+        self.outputtime = QLabel("")
         self.outputsize = QLabel("")
 
         self.saveoutput = QPushButton("Download")
@@ -114,6 +114,7 @@ class MainWindow(QMainWindow):
         rsa = RSA(sympy.randprime(2**63, 2**64-1), sympy.randprime(2**63, 2**64-1))
         rsa.generateE()
         rsa.generateD()
+        self.genkey.setText("Generated!")
 
     def encrypt_function(self):
         instring = []
