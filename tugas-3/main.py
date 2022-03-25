@@ -43,11 +43,15 @@ class MainWindow(QMainWindow):
         self.chooseinputfile.clicked.connect(self.open_input)
         self.chooseinputfile.setStyleSheet("background-color: #023047;\n"
                                             "color: white")
+
+        self.inputdisplay = QPlainTextEdit()
+        self.inputdisplay.setReadOnly(True)
+        self.inputdisplay.setStyleSheet("background-color: white")
         self.inputfield = QPlainTextEdit()
         self.inputfield.setReadOnly(True)
         self.inputfield.setStyleSheet("background-color: white")
         
-        self.label1 = QLabel(" ")
+        self.label1 = QLabel(" ")        
         layoutkey = QVBoxLayout()
         self.labelkey = QLabel("e or d:")
         self.inputkey = QPlainTextEdit()
@@ -75,14 +79,14 @@ class MainWindow(QMainWindow):
         self.keyfile.setStyleSheet("background-color: #023047;\n"
                                     "color: white")
         
-        self.label2 = QLabel(" ")
+        self.label1 = QLabel(" ")
         self.labelgen = QLabel("Do not have key?")
         self.genkey = QPushButton("Generate key first")
         self.genkey.clicked.connect(self.gen)
         self.genkey.setStyleSheet("background-color: #023047;\n"
                                     "color: white")
         
-        self.label3 = QLabel(" ")
+        self.label2 = QLabel(" ")
         self.labeloutput = QLabel("Output:")
         self.outputfield = QPlainTextEdit()
         self.outputfield.setReadOnly(True)
@@ -110,17 +114,16 @@ class MainWindow(QMainWindow):
         layoutall.addWidget(self.labeltitle)
         layoutall.addWidget(self.labelinput)
         layoutall.addWidget(self.chooseinputfile)
-        layoutall.addWidget(self.inputfield)
-        layoutall.addWidget(self.label1)
-
+        # layoutall.addWidget(self.inputfield)
+        layoutall.addWidget(self.inputdisplay)
         self.stack = QWidget()
         self.stack.setLayout(layouth)
         layoutall.addWidget(self.stack)
         layoutall.addWidget(self.keyfile)
-        layoutall.addWidget(self.label2)
+        layoutall.addWidget(self.label1)
         layoutall.addWidget(self.labelgen)
         layoutall.addWidget(self.genkey)
-        layoutall.addWidget(self.label3)
+        layoutall.addWidget(self.label2)
         layoutall.addWidget(self.labeloutput)
         layoutall.addWidget(self.outputfield)
         layoutall.addWidget(self.outputtime)
@@ -134,6 +137,7 @@ class MainWindow(QMainWindow):
         self.rsa = RSA()
         
     def gen(self):
+        self.rsa = RSA()
         self.genkey.setText("Generated!")
 
     def encrypt_function(self):
@@ -145,7 +149,7 @@ class MainWindow(QMainWindow):
         start_time = time()
         encrypted = self.rsa.encrypt(byte)
         end_time = time()
-        self.outputtime.setText("Time taken for encrypting : " + str(end_time - start_time) + "seconds")
+        self.outputtime.setText("Time taken for encrypting : " + str(end_time - start_time) + " seconds")
         self.outputsize.setText ("Size of plaintext file: "+ str(input_size * 16) + " bytes")
         nani = ""
         for i in range (len (encrypted)):
@@ -170,7 +174,7 @@ class MainWindow(QMainWindow):
             start_time = time()
             decrypted = self.rsa.decrypt(byte)
             end_time = time()
-            self.outputtime.setText("Time taken for decrypting : " + str(end_time - start_time) + "seconds")
+            self.outputtime.setText("Time taken for decrypting : " + str(end_time - start_time) + " seconds")
             self.outputsize.setText("Size of plaintext file:" + str(input_size / 16) + " bytes")
             self.outputfield.setPlainText(decrypted)
 
@@ -181,12 +185,14 @@ class MainWindow(QMainWindow):
         self.outputfield.clear()
         if fileName:
             if fileName.endswith('.txt'):
-               # File txt
-               with open(fileName, 'r', encoding='ISO-8859-1') as f:
-                   content = f.read()
-                   self.inputfield.setPlainText(fileName)
+                # File txt
+                with open(fileName, 'r', encoding='ISO-8859-1') as f:
+                    content = f.read()
+                    self.inputfield.setPlainText(fileName)
+                    self.inputdisplay.setPlainText(content + "\nFrom: " + fileName)
             else:
                 self.inputfield.setPlainText(fileName)
+                self.inputdisplay.setPlainText("From: " + fileName)
 
     def open_key(self):
         fileName = ''
