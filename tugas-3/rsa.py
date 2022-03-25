@@ -59,7 +59,21 @@ class RSA:
             print ("E has been set")
         else :
             print("You have chosen the wrong E")
-
+    def genKey (self):
+        p = sympy.randprime(2**63, 2**64-1)
+        q = sympy.randprime(2**63, 2**64-1)
+        while p==q :
+            q = sympy.randprime(2**63, 2**64-1)
+        self.n = p*q
+        self.tot = (p-1)*(q-1)
+        self.generateE()
+        self.generateD()
+        tup = {'d':self.d, 'n':self.n}
+        with open("RSA-NN.pri" , "w")as f:
+            json.dump(tup, f)
+        tup = {'e':self.e, 'n':self.n}
+        with open ("RSA-NN.pub", "w")as f:
+            json.dump(tup, f)        
     def generateD(self)-> int:
         d = pow(self.e, -1, self.tot)
         print("d has been set to : ", d)
@@ -83,7 +97,7 @@ class RSA:
         print(len(ciphermsg))
         for i in range (0, len(ciphermsg), 16):
             print ("i :", i)
-            print ("ciphermsg : ", ciphermsg)
+            # print ("ciphermsg : ", ciphermsg)
             ciphertext = bytearray(ciphermsg)
             # print(type(ciphertext)) mengeluarkan bytearray
             text9 = int.from_bytes(ciphertext[i:i+16], byteorder="big", signed=False)

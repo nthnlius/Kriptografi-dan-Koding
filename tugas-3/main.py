@@ -137,7 +137,7 @@ class MainWindow(QMainWindow):
         self.rsa = RSA()
         
     def gen(self):
-        self.rsa = RSA()
+        rsa.genkey()
         self.genkey.setText("Generated!")
 
     def encrypt_function(self):
