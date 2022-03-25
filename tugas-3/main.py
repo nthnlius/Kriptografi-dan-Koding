@@ -141,6 +141,9 @@ class MainWindow(QMainWindow):
         self.genkey.setText("Generated!")
 
     def encrypt_function(self):
+        # self.outputfield.setPlainText("")
+        # self.outputtime.setText("")
+        # self.outputsize.setText("")
         inputtext = self.inputfield.toPlainText()
 
         with open(inputtext, 'rb') as f:
@@ -165,8 +168,12 @@ class MainWindow(QMainWindow):
                 nani+=(chr(ahh))
         self.outputfield.setPlainText(text2)
         self.encryptmsg = nani
+        # self.genkey.setText("Generate key first")
 
     def decrypt_function(self):
+        # self.outputfield.setPlainText("")
+        # self.outputtime.setText("")
+        # self.outputsize.setText("")
         inputtext = self.inputfield.toPlainText()
 
         with open(inputtext, 'rb') as f:
@@ -179,6 +186,7 @@ class MainWindow(QMainWindow):
             self.outputsize.setText("Size of plaintext file:" + str(input_size / 16) + " bytes")
             self.outputfield.setPlainText(decrypted)
             self.encryptmsg=decrypted
+        # self.genkey.setText("Generate key first")
 
     def open_input(self):
         fileName = ''
