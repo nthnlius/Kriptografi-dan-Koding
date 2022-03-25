@@ -83,18 +83,18 @@ class RSA:
         ciphertext = []
 
         for byt in message :
-            byte = byt
             # print (byte)
-            ciphermsg = pow(byte, self.e, self.n)
+            ciphermsg = pow(byt, self.e, self.n)
             ciphertext.append(ciphermsg)
-        print (ciphertext)
+        # print (ciphertext)
         # for i in range (len(ciphertext)):
-            # print (hex(ciphertext[i]))
+        #     print (hex(ciphertext[i]))
+        # print (ciphertext)
         return ciphertext
     def decrypt (self, ciphermsg : bytearray):
         plaintext = []
         plaintxt = ''
-        print(len(ciphermsg))
+        # print(len(ciphermsg))
         for i in range (0, len(ciphermsg), 16):
             print ("i :", i)
             # print ("ciphermsg : ", ciphermsg)
@@ -102,14 +102,14 @@ class RSA:
             # print(type(ciphertext)) mengeluarkan bytearray
             text9 = int.from_bytes(ciphertext[i:i+16], byteorder="big", signed=False)
             # print ("aaa" , ciphertext[i*16:i*16+16])
-            print(f'hex: {hex(text9)}')
-            print("text : ", text9)
+            # print(f'hex: {hex(text9)}')
+            # print("text : ", text9)
             # for j in range (len(text9)):
             plainmsg = pow(text9, self.d, self.n)
-            print("plainmsg : ", plainmsg)
+            # print("plainmsg : ", plainmsg)
             plaintext.append(plainmsg)
             plaintxt+=chr(plainmsg)
-        print (plaintxt)
+        # print (plaintxt)
         
         return (plaintxt)
 
@@ -158,3 +158,6 @@ def exp2(a:int , b:int)-> int :
 #72074772781006188336026735860538711311
 #72074772781006188336062764657557675279
 #0x363918a7fe74fc1f3b20f0695cec9d0f
+#108898005206395243020851411875449083296
+#108898005206395243020851411875449083168
+

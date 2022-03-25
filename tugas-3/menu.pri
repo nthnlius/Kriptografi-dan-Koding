@@ -1,1 +1,0 @@
-{"menu": [{"id": 2, "name": "sayur"}, {"id": 3, "name": "string"}, {"id": 4, "name": "susu"}, {"id": 5, "name": "string"}]}

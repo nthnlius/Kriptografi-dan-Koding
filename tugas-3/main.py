@@ -135,9 +135,9 @@ class MainWindow(QMainWindow):
         widget.setLayout(layoutall)
         self.setCentralWidget(widget)
         self.rsa = RSA()
-        
+        self.encryptmsg = ''
     def gen(self):
-        self.rsa.genkey()
+        self.rsa.genKey()
         self.genkey.setText("Generated!")
 
     def encrypt_function(self):
@@ -161,9 +161,10 @@ class MainWindow(QMainWindow):
             for j in range (1, len(text2)//2):
                 euy = text2[j*2 :j*2+2] #euy mengambil tiap bytes dalam text.
                 ahh = int(euy, 16) #ahh mengubah euy dari heksadesimal jadi integer
+                # print ("euy: ", euy,"ahh", ahh)
                 nani+=(chr(ahh))
         self.outputfield.setPlainText(text2)
-        self.orioutput.setPlainText(nani)
+        self.encryptmsg = nani
 
     def decrypt_function(self):
         inputtext = self.inputfield.toPlainText()
@@ -177,6 +178,7 @@ class MainWindow(QMainWindow):
             self.outputtime.setText("Time taken for decrypting : " + str(end_time - start_time) + " seconds")
             self.outputsize.setText("Size of plaintext file:" + str(input_size / 16) + " bytes")
             self.outputfield.setPlainText(decrypted)
+            self.encryptmsg=decrypted
 
     def open_input(self):
         fileName = ''
@@ -225,7 +227,7 @@ class MainWindow(QMainWindow):
     def savefile(self):
         fileName, _ = QFileDialog.getSaveFileName(self, 'Save Output', 'output')
         if(fileName):
-            output = self.orioutput.toPlainText()
+            output = self.encryptmsg
             output2 = bytearray(output, encoding="iso8859")
             fname = open(fileName, 'wb')
             fname.write(output2)
