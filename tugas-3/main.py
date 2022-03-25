@@ -149,6 +149,8 @@ class MainWindow(QMainWindow):
         with open(inputtext, 'rb') as f:
             byte = f.read()
         input_size = len(byte)
+        self.rsa.e = int(self.inputkey.toPlainText())
+        self.rsa.n = int(self.inputn.toPlainText())
         start_time = time()
         encrypted = self.rsa.encrypt(byte)
         end_time = time()
@@ -179,6 +181,8 @@ class MainWindow(QMainWindow):
         with open(inputtext, 'rb') as f:
             byte = f.read()
             input_size = len(byte)
+            self.rsa.d = int(self.inputkey.toPlainText())
+            self.rsa.n = int(self.inputn.toPlainText())
             start_time = time()
             decrypted = self.rsa.decrypt(byte)
             end_time = time()
