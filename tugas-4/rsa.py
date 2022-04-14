@@ -29,10 +29,10 @@ class RSA:
                 prikey = json.load(r)
                 self.d = prikey['d']
         except FileNotFoundError :
-            p = sympy.randprime(2**63, 2**64-1)
-            q = sympy.randprime(2**63, 2**64-1)
+            p = sympy.randprime(2**255, 2**256-1)
+            q = sympy.randprime(2**255, 2**256-1)
             while p==q :
-                q = sympy.randprime(2**63, 2**64-1)
+                q = sympy.randprime(2**255, 2**256-1)
             self.n = p*q
             self.tot = (p-1)*(q-1)
             self.generateE()
@@ -48,9 +48,9 @@ class RSA:
         if (isPrime(self.p) and isPrime(self.q)):
             return gcd(e, self.tot) == 1
     def generateE(self)->None:
-        randnum = sympy.randprime(2**63, 2**64-1)
+        randnum = sympy.randprime(2**255, 2**256-1)
         while (gcd(randnum, self.tot)!=1):
-            randnum = sympy.randprime(2**63, 2**64-1)
+            randnum = sympy.randprime(2**255, 2**256-1)
         self.e = randnum
     ''' rumus : d = (1+k*tot)/e'''
     def setE(self,num):
@@ -60,10 +60,10 @@ class RSA:
         else :
             print("You have chosen the wrong E")
     def genKey (self):
-        p = sympy.randprime(2**63, 2**64-1)
-        q = sympy.randprime(2**63, 2**64-1)
+        p = sympy.randprime(2**255, 2**256-1)
+        q = sympy.randprime(2**255, 2**256-1)
         while p==q :
-            q = sympy.randprime(2**63, 2**64-1)
+            q = sympy.randprime(2**255, 2**256-1)
         self.n = p*q
         self.tot = (p-1)*(q-1)
         self.generateE()
@@ -79,39 +79,41 @@ class RSA:
         print("d has been set to : ", d)
         self.d = d
         return d
-    def encrypt(self, message:bytearray):
+    def encrypt(self, message:int):
         ciphertext = []
-
-        for byt in message :
-            # print (byte)
-            ciphermsg = pow(byt, self.e, self.n)
-            ciphertext.append(ciphermsg)
+        ciphermsg = pow(message, self.e, self.n)
+        # for byt in message :
+        #     # print (byte)
+        #     ciphermsg = pow(byt, self.e, self.n)
+        #     ciphertext.append(ciphermsg)
         # print (ciphertext)
         # for i in range (len(ciphertext)):
         #     print (hex(ciphertext[i]))
         # print (ciphertext)
-        return ciphertext
-    def decrypt (self, ciphermsg : bytearray):
+        return ciphermsg
+    def decrypt (self, ciphermsg : int):
         plaintext = []
         plaintxt = ''
-        # print(len(ciphermsg))
-        for i in range (0, len(ciphermsg), 16):
-            print ("i :", i)
-            # print ("ciphermsg : ", ciphermsg)
-            ciphertext = bytearray(ciphermsg)
-            # print(type(ciphertext)) mengeluarkan bytearray
-            text9 = int.from_bytes(ciphertext[i:i+16], byteorder="big", signed=False)
-            # print ("aaa" , ciphertext[i*16:i*16+16])
-            # print(f'hex: {hex(text9)}')
-            # print("text : ", text9)
-            # for j in range (len(text9)):
-            plainmsg = pow(text9, self.d, self.n)
-            # print("plainmsg : ", plainmsg)
-            plaintext.append(plainmsg)
-            plaintxt+=chr(plainmsg)
-        # print (plaintxt)
+        val = pow(ciphermsg, self.d, self.e)
+        return val
+        # # print(len(ciphermsg))
+        # for i in range (0, len(ciphermsg), 16):
+        #     # print ("i :", i)
+        #     # print ("ciphermsg : ", ciphermsg)
+        #     ciphertext = bytearray(ciphermsg)
+        #     # print(type(ciphertext)) mengeluarkan bytearray
+        #     text9 = int.from_bytes(ciphertext[i:i+16], byteorder="big", signed=False)
+        #     # print ("aaa" , ciphertext[i*16:i*16+16])
+        #     # print(f'hex: {hex(text9)}')
+        #     # print("text : ", text9)
+        #     # for j in range (len(text9)):
+        #     plainmsg = pow(text9, self.d, self.n)
+        #     # print("plainmsg : ", plainmsg)
+        #     plaintext.append(plainmsg)
+        #     plaintxt+=chr(plainmsg)
+        # # print (plaintxt)
         
-        return (plaintxt)
+        # return (plaintxt)
 
 def nextPrime(x):
     nextprime = x + 1
