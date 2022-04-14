@@ -94,7 +94,7 @@ class RSA:
     def decrypt (self, ciphermsg : int):
         plaintext = []
         plaintxt = ''
-        val = pow(ciphermsg, self.d, self.e)
+        val = pow(ciphermsg, self.d, self.n)
         return val
         # # print(len(ciphermsg))
         # for i in range (0, len(ciphermsg), 16):
