@@ -23,15 +23,15 @@ def sign_function(input, key, n, terpisah):
     output = input[0:len(input)-4]+'.ds'
     if terpisah :
         with open(output, 'w') as f:
-            f.write(msg+'\n'+full_sign)
+            f.write(full_sign)
             f.close()
     else :
         with open(output, 'w') as f:
-            f.write(full_sign)
+            f.write(msg+'\n'+full_sign)
             f.close()
 
 
-def verify_function_satu(inputfile, key, n, inputsign=None):
+def verify_function(inputfile, key, n, inputsign=None):
     
     rsa = RSA()
     opening_text = "*** Begin of digital signature ****\n"
