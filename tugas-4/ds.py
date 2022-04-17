@@ -1,7 +1,7 @@
 from rsa import *
 import hashlib
 
-def sign_function(input, key, n):
+def sign_function(input, key, n, terpisah):
     with open(input, 'rb') as f:
         byte = f.read()
 
@@ -21,35 +21,49 @@ def sign_function(input, key, n):
     with open (input, 'r') as read:
         msg = read.read()
     output = input[0:len(input)-4]+'.ds'
-    with open(output, 'w') as f:
-        f.write(full_sign+msg)
-        f.close()
+    if terpisah :
+        with open(output, 'w') as f:
+            f.write(msg+'\n'+full_sign)
+            f.close()
+    else :
+        with open(output, 'w') as f:
+            f.write(full_sign)
+            f.close()
 
 
-def verify_function(input, key, n):
+def verify_function_satu(inputfile, key, n, inputsign=None):
+    
     rsa = RSA()
     opening_text = "*** Begin of digital signature ****\n"
     ending_text = "\n*** end of digital signature ****\n"
-    with open(input, 'r') as f:
-        msg = f.read()
-    a = msg.find(opening_text)
-    b = msg.find(ending_text)
-    print ("a : ", a)
-    print ("b : ", b)
-    print ("len opening : ", len(opening_text))
-    print ("len ending : ", len(ending_text))
-    print ("len message : ", len(msg))
+    if inputsign != None :
+        with open(inputsign, 'r') as signature:
+            sign = signature.read()
+        b = sign.find(ending_text)
+        hexcode = sign[len(opening_text), b]
+        hexsign = int(hexcode, 16)
+        with open(inputfile, 'r') as f:
+            msg = f.read()
+        new_hash = int(hashlib.sha1(msg).hexdigest(), 16)
+    else :
+        a = msg.find(opening_text)
+        b = msg.find(ending_text)
+        # print ("a : ", a)
+        # print ("b : ", b)
+        # print ("len opening : ", len(opening_text))
+        # print ("len ending : ", len(ending_text))
+        # print ("len message : ", len(msg))
 
-    #extract message + hash
-    msgasli = msg[b+len(ending_text):len(msg)].encode()
-    new_hash = int(hashlib.sha1(msgasli).hexdigest(), 16)
+        #extract message + hash
+        msgasli = msg[0:a].encode()
+        new_hash = int(hashlib.sha1(msgasli).hexdigest(), 16)
 
-    #extract sign
-    hexcode = msg[a+len(opening_text):b]
-    hexsign = int(hexcode, 16)
-    print("hexsign : ", hexsign)
-    print ("hexcode: ",hexcode)
-    print(msgasli)
+        #extract sign
+        hexcode = msg[a+len(opening_text):b]
+        hexsign = int(hexcode, 16)
+    # print("hexsign : ", hexsign)
+    # print ("hexcode: ",hexcode)
+    # print(msgasli)
     rsa.d = int(key)
     rsa.n = int(n)
     decrypted = rsa.decrypt(hexsign)
@@ -67,10 +81,10 @@ def verify_function(input, key, n):
 
 
 
-inputs = "encrypted.txt"
-filez = "encrypted.ds"
-prikey = 7129805958236125393909738899866134989728638063622359947119881565798251094414567045921221055364743742709033116352607338950617399946263110118790752194024153
-pubkey = 109558181538109078287528220891604334756710284053597150924934634686015175723113
-n = 7372594836593511881892902850168856802932406183893917829802923640246956366562853741765096072098940947314465379540487401549291738430994906582113728211934241
-sign_function(inputs, prikey, n)
-verify_function(filez, pubkey, n)
+# inputs = "encrypted.txt"
+# filez = "encrypted.ds"
+# prikey = 7129805958236125393909738899866134989728638063622359947119881565798251094414567045921221055364743742709033116352607338950617399946263110118790752194024153
+# pubkey = 109558181538109078287528220891604334756710284053597150924934634686015175723113
+# n = 7372594836593511881892902850168856802932406183893917829802923640246956366562853741765096072098940947314465379540487401549291738430994906582113728211934241
+# sign_function(inputs, prikey, n)
+# verify_function(filez, pubkey, n)
