@@ -40,6 +40,12 @@ class MainWindow(QMainWindow):
         self.labelsubtitle = QLabel("By: Nathaniel & Nadya\n")
         self.labelsubtitle.setStyleSheet("font: 10pt Verdana")
 
+        self.labelfitur = QLabel("Fitur:")
+        self.fitur = QComboBox()
+        self.fitur.addItems(["Generate Key", "Sign Document", "Verify Document"])
+        self.fitur.setStyleSheet("background-color: white")
+
+
         #layout generate key
         self.genkey = QPushButton("Generate Key")
         self.genkey.clicked.connect(self.gen)
@@ -56,14 +62,17 @@ class MainWindow(QMainWindow):
         self.inputdisplay = QPlainTextEdit()
         self.inputdisplay.setReadOnly(True)
         self.inputdisplay.setStyleSheet("background-color: white")
-        self.inputfield = QPlainTextEdit()
-        self.inputfield.setReadOnly(True)
-        self.inputfield.setStyleSheet("background-color: white")
+        # self.inputfield = QPlainTextEdit()
+        # self.inputfield.setReadOnly(True)
+        # self.inputfield.setStyleSheet("background-color: white")
 
         self.keyfile = QPushButton("Choose key file")
         self.keyfile.clicked.connect(self.open_key)
         self.keyfile.setStyleSheet("background-color: #023047;\n"
                                     "color: white")
+        self.keydisplay = QPlainTextEdit()
+        self.keydisplay.setReadOnly(True)
+        self.keydisplay.setStyleSheet("background-color: white")
         self.inputkey = QPlainTextEdit()
         self.inputkey.hide()
         self.inputn = QPlainTextEdit()
@@ -82,20 +91,23 @@ class MainWindow(QMainWindow):
         self.inputdisplay2 = QPlainTextEdit()
         self.inputdisplay2.setReadOnly(True)
         self.inputdisplay2.setStyleSheet("background-color: white")
-        self.inputfield2 = QPlainTextEdit()
-        self.inputfield2.setReadOnly(True)
-        self.inputfield2.setStyleSheet("background-color: white")
-
+        # self.inputfield2 = QPlainTextEdit()
+        # self.inputfield2.setReadOnly(True)
+        # self.inputfield2.setStyleSheet("background-color: white")
+        
         self.keyfile2 = QPushButton("Choose key file")
         self.keyfile2.clicked.connect(self.open_key)
         self.keyfile2.setStyleSheet("background-color: #023047;\n"
                                     "color: white")
+        self.keydisplay2 = QPlainTextEdit()
+        self.keydisplay2.setReadOnly(True)
+        self.keydisplay2.setStyleSheet("background-color: white")
         self.inputkey2 = QPlainTextEdit()
         self.inputkey2.hide()
         self.inputn2 = QPlainTextEdit()
         self.inputn2.hide()
 
-        self.verif = QPushButton("Sign File")
+        self.verif = QPushButton("Verify File")
         self.verif.clicked.connect(self.verif_function)
 
         self.verification = QMessageBox()
@@ -112,13 +124,19 @@ class MainWindow(QMainWindow):
         self.stack.addWidget(self.stackkey)
         self.stack.addWidget(self.stacksign)
         self.stack.addWidget(self.stackverify)
+
+        self.fitur.currentIndexChanged.connect(self.changemenus)
        
+        widget = QWidget()
         layout = QVBoxLayout()
         layout.addWidget(self.labeltitle)
         layout.addWidget(self.labelsubtitle)
+        layout.addWidget(self.labelfitur)
+        layout.addWidget(self.fitur)
         layout.addWidget(self.stack)
-        
-        # self.setCentralWidget(widget)
+        widget.setLayout(layout)
+        self.setCentralWidget(widget)
+
         self.rsa = RSA()
 
     def layout_key(self):
@@ -133,10 +151,11 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.labelinput)
         layout.addWidget(self.chooseinputfile)
         layout.addWidget(self.inputdisplay)
-        layout.addWidget(self.inputfield)
+        # layout.addWidget(self.inputfield)
         layout.addWidget(self.keyfile)
         layout.addWidget(self.inputkey)
         layout.addWidget(self.inputn)
+        layout.addWidget(self.keydisplay)
         layout.addWidget(self.signing)
 
         self.stacksign.setLayout(layout)
@@ -146,12 +165,25 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.labelinput2)
         layout.addWidget(self.chooseinputfile2)
         layout.addWidget(self.inputdisplay2)
-        layout.addWidget(self.inputfield2)
+        # layout.addWidget(self.inputfield2)
+        layout.addWidget(self.keyfile2)
+        layout.addWidget(self.inputkey2)
+        layout.addWidget(self.inputn2)
+        layout.addWidget(self.keydisplay2)
         layout.addWidget(self.verif)
-        layout.addWidget(self.verification)
+        # layout.addWidget(self.verification)
 
-        self.stacksign.setLayout(layout)
+        self.stackverify.setLayout(layout)
 
+    def changemenus(self):
+        # Untuk ganti menu fitur
+        index = self.fitur.currentIndex()
+        if index == 0:
+            self.stack.setCurrentIndex(0)
+        elif index == 1:
+            self.stack.setCurrentIndex(1)
+        elif index == 2:
+            self.stack.setCurrentIndex(2)
 
     def gen(self):
         self.rsa.genKey()
@@ -168,21 +200,23 @@ class MainWindow(QMainWindow):
     def verif_function(self):
         result = verify_function(self.inputdisplay2.toPlainText(), self.inputkey2.toPlainText(), self.inputn2.toPlainText())
         self.verification.setText(result)
+        self.verification.exec_()
         
     def open_input(self):
         fileName = ''
         fileName, _ = QFileDialog.getOpenFileName(self, 'File Input')
         content = ''
-        self.outputfield.clear()
+        # self.outputfield.clear()
         if fileName:
             if fileName.endswith('.txt'):
                 # File txt
                 with open(fileName, 'r', encoding='ISO-8859-1') as f:
                     content = f.read()
-                    self.inputfield.setPlainText(fileName)
+                    # self.inputfield.setPlainText(fileName)
                     self.inputdisplay.setPlainText(content + "\nFrom: " + fileName)
+                    self.inputdisplay2.setPlainText(content + "\nFrom: " + fileName)
             else:
-                self.inputfield.setPlainText(fileName)
+                # self.inputfield.setPlainText(fileName)
                 self.inputdisplay.setPlainText("From: " + fileName)
 
     def open_key(self):
@@ -193,7 +227,7 @@ class MainWindow(QMainWindow):
         e =''
         n = ''
         i = 6
-        self.outputfield.clear()
+        # self.outputfield.clear()
         if fileName:
             if fileName.endswith('.pri'):
                 f = open(fileName)
@@ -203,6 +237,7 @@ class MainWindow(QMainWindow):
                 f.close()
                 self.inputkey.setPlainText(str(self.rsa.d))
                 self.inputn.setPlainText(str(self.rsa.n))
+                self.keydisplay.setPlainText("From: " + fileName)
             elif fileName.endswith('.pub'):
                 f = open(fileName)
                 public = json.load(f)
@@ -211,6 +246,7 @@ class MainWindow(QMainWindow):
                 f.close()
                 self.inputkey.setPlainText(str(self.rsa.e))
                 self.inputn.setPlainText(str(self.rsa.n))
+                self.keydisplay2.setPlainText("From: " + fileName)
 
 app = QApplication(sys.argv)
 window = MainWindow()
