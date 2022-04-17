@@ -23,15 +23,15 @@ def sign_function(input, key, n, terpisah):
     output = input[0:len(input)-4]+'.ds'
     if terpisah :
         with open(output, 'w') as f:
-            f.write(msg+'\n'+full_sign)
+            f.write(full_sign)
             f.close()
     else :
         with open(output, 'w') as f:
-            f.write(full_sign)
+            f.write(msg+'\n'+full_sign)
             f.close()
 
 
-def verify_function_satu(inputfile, key, n, inputsign=None):
+def verify_function(inputfile, key, n, inputsign=None):
     
     rsa = RSA()
     opening_text = "*** Begin of digital signature ****\n"
@@ -39,6 +39,7 @@ def verify_function_satu(inputfile, key, n, inputsign=None):
     if inputsign != None :
         with open(inputsign, 'r') as signature:
             sign = signature.read()
+        a = sign.find(opening_text)
         b = sign.find(ending_text)
         if (b== 0):
             output = "file has been changed!"
@@ -52,6 +53,8 @@ def verify_function_satu(inputfile, key, n, inputsign=None):
             msg = f.read()
         new_hash = int(hashlib.sha1(msg.encode()).hexdigest(), 16)
     else :
+        with open(inputfile, 'r') as f:
+            msg = f.read()
         a = msg.find(opening_text)
         b = msg.find(ending_text)
         # print ("a : ", a)
@@ -63,7 +66,8 @@ def verify_function_satu(inputfile, key, n, inputsign=None):
             output = "file has been changed!"
             return output
         #extract message + hash
-        msgasli = msg[0:a].encode()
+        msgasli = msg[0:a-1].encode()
+        print("msgasli: ", msgasli)
         new_hash = int(hashlib.sha1(msgasli).hexdigest(), 16)
 
         #extract sign
@@ -72,8 +76,8 @@ def verify_function_satu(inputfile, key, n, inputsign=None):
             output = "file has been changed!"
             return output
         hexsign = int(hexcode, 16)
-    # print("hexsign : ", hexsign)
-    # print ("hexcode: ",hexcode)
+    print("hexsign : ", hexsign)
+    print ("hexcode: ",hexcode)
     # print(msgasli)
     rsa.d = int(key)
     rsa.n = int(n)
@@ -86,6 +90,7 @@ def verify_function_satu(inputfile, key, n, inputsign=None):
         output = "Verified!"
     else:
         output = "The file has been changed!"
+    print("result: ", output)
     return output
 
 

@@ -79,7 +79,7 @@ class MainWindow(QMainWindow):
         self.inputn = QPlainTextEdit()
         self.inputn.hide()
 
-        self.separate = QCheckBox("Save digital signature in a seperate document")
+        self.separate = QCheckBox("Save digital signature in a separate document")
         
         self.signing = QPushButton("Sign File")
         self.signing.clicked.connect(self.signing_function)
@@ -100,7 +100,7 @@ class MainWindow(QMainWindow):
         self.inputfield2.setReadOnly(True)
         self.inputfield2.setStyleSheet("background-color: white")
 
-        self.separate2 = QCheckBox("Digital signature in a seperate document")
+        self.separate2 = QCheckBox("Digital signature in a separate document")
         self.separate2.clicked.connect(self.check_state)
         self.choosesignfile = QPushButton("Choose signature file")
         self.choosesignfile.setEnabled(False)
@@ -111,6 +111,9 @@ class MainWindow(QMainWindow):
         self.inputsign = QPlainTextEdit()
         self.inputsign.setReadOnly(True)
         self.inputsign.setStyleSheet("background-color: white")
+        self.signdisplay = QPlainTextEdit()
+        self.signdisplay.setReadOnly(True)
+        self.signdisplay.setStyleSheet("background-color: white")
         
         self.keyfile2 = QPushButton("Choose key file")
         self.keyfile2.clicked.connect(self.open_key)
@@ -170,7 +173,6 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.labelinput)
         layout.addWidget(self.chooseinputfile)
         layout.addWidget(self.inputdisplay)
-        # layout.addWidget(self.inputfield)
         layout.addWidget(self.keyfile)
         layout.addWidget(self.inputkey)
         layout.addWidget(self.inputn)
@@ -189,7 +191,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.separate2)
         layout.addWidget(self.labelsign)
         layout.addWidget(self.choosesignfile)
-        layout.addWidget(self.inputsign)
+        layout.addWidget(self.signdisplay)
         layout.addWidget(self.keyfile2)
         layout.addWidget(self.inputkey2)
         layout.addWidget(self.inputn2)
@@ -208,13 +210,25 @@ class MainWindow(QMainWindow):
             self.stack.setCurrentIndex(1)
         elif index == 2:
             self.stack.setCurrentIndex(2)
+        
+        layout.addWidget(self.labelinput)
+        layout.addWidget(self.chooseinputfile)
+        layout.addWidget(self.inputdisplay)
+        layout.addWidget(self.keyfile)
+        layout.addWidget(self.inputkey)
+        layout.addWidget(self.inputn)
+        layout.addWidget(self.keydisplay)
+        layout.addWidget(self.separate)
+        layout.addWidget(self.signing)
+        
+
 
     def check_state(self):
         if self.separate2.isChecked():
             self.choosesignfile.setStyleSheet("background-color: #023047;\n"
                                     "color: white")
             self.choosesignfile.setEnabled(True)
-            self.choosesignfile.clicked.connect(self.open_input)
+            self.choosesignfile.clicked.connect(self.open_sign)
         else:
             self.choosesignfile.setEnabled(False)
             self.choosesignfile.setStyleSheet("background-color: #bfbebe;\n"
@@ -233,7 +247,10 @@ class MainWindow(QMainWindow):
                                     "color: black")
 
     def verif_function(self):
-        result = verify_function(self.inputfield2.toPlainText(), self.inputkey2.toPlainText(), self.inputn2.toPlainText(), self.separate2.isChecked())
+        if self.separate2.isChecked():
+            result = verify_function(self.inputfield2.toPlainText(), self.inputkey2.toPlainText(), self.inputn2.toPlainText(), self.inputsign.toPlainText())
+        else:
+            result = verify_function(self.inputfield2.toPlainText(), self.inputkey2.toPlainText(), self.inputn2.toPlainText())
         self.verification.setText(result)
         self.verification.exec_()
         
@@ -278,6 +295,17 @@ class MainWindow(QMainWindow):
                 self.inputkey2.setPlainText(str(self.rsa.e))
                 self.inputn2.setPlainText(str(self.rsa.n))
                 self.keydisplay2.setPlainText("From: " + fileName)
+    
+    def open_sign(self):
+        fileName = ''
+        fileName, _ = QFileDialog.getOpenFileName(self, 'File Input')
+        content = ''
+        # self.outputfield.clear()
+        if fileName:
+            with open(fileName, 'r', encoding='ISO-8859-1') as f:
+                content = f.read()
+                self.inputsign.setPlainText(fileName)
+                self.signdisplay.setPlainText(content + "\nFrom: " + fileName)
 
 app = QApplication(sys.argv)
 window = MainWindow()
