@@ -39,13 +39,16 @@ def verify_function(inputfile, key, n, inputsign=None):
     if inputsign != None :
         with open(inputsign, 'r') as signature:
             sign = signature.read()
+        a = sign.find(opening_text)
         b = sign.find(ending_text)
-        hexcode = sign[len(opening_text), b]
+        hexcode = sign[a+len(opening_text) : b]
         hexsign = int(hexcode, 16)
         with open(inputfile, 'r') as f:
             msg = f.read()
-        new_hash = int(hashlib.sha1(msg).hexdigest(), 16)
+        new_hash = int(hashlib.sha1(msg.encode()).hexdigest(), 16)
     else :
+        with open(inputfile, 'r') as f:
+            msg = f.read()
         a = msg.find(opening_text)
         b = msg.find(ending_text)
         # print ("a : ", a)
@@ -55,14 +58,15 @@ def verify_function(inputfile, key, n, inputsign=None):
         # print ("len message : ", len(msg))
 
         #extract message + hash
-        msgasli = msg[0:a].encode()
+        msgasli = msg[0:a-1].encode()
+        print("msgasli: ", msgasli)
         new_hash = int(hashlib.sha1(msgasli).hexdigest(), 16)
 
         #extract sign
         hexcode = msg[a+len(opening_text):b]
         hexsign = int(hexcode, 16)
-    # print("hexsign : ", hexsign)
-    # print ("hexcode: ",hexcode)
+    print("hexsign : ", hexsign)
+    print ("hexcode: ",hexcode)
     # print(msgasli)
     rsa.d = int(key)
     rsa.n = int(n)
@@ -75,6 +79,7 @@ def verify_function(inputfile, key, n, inputsign=None):
         output = "Verified!"
     else:
         output = "The file has been changed!"
+    print("result: ", output)
     return output
 
 

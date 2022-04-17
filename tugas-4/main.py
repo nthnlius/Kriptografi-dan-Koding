@@ -79,7 +79,7 @@ class MainWindow(QMainWindow):
         self.inputn = QPlainTextEdit()
         self.inputn.hide()
 
-        self.separate = QCheckBox("Save digital signature in a seperate document")
+        self.separate = QCheckBox("Save digital signature in a separate document")
         
         self.signing = QPushButton("Sign File")
         self.signing.clicked.connect(self.signing_function)
@@ -100,7 +100,7 @@ class MainWindow(QMainWindow):
         self.inputfield2.setReadOnly(True)
         self.inputfield2.setStyleSheet("background-color: white")
 
-        self.separate2 = QCheckBox("Digital signature in a seperate document")
+        self.separate2 = QCheckBox("Digital signature in a separate document")
         self.separate2.clicked.connect(self.check_state)
         self.choosesignfile = QPushButton("Choose signature file")
         self.choosesignfile.setEnabled(False)
@@ -173,7 +173,6 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.labelinput)
         layout.addWidget(self.chooseinputfile)
         layout.addWidget(self.inputdisplay)
-        # layout.addWidget(self.inputfield)
         layout.addWidget(self.keyfile)
         layout.addWidget(self.inputkey)
         layout.addWidget(self.inputn)
@@ -211,6 +210,18 @@ class MainWindow(QMainWindow):
             self.stack.setCurrentIndex(1)
         elif index == 2:
             self.stack.setCurrentIndex(2)
+        
+        layout.addWidget(self.labelinput)
+        layout.addWidget(self.chooseinputfile)
+        layout.addWidget(self.inputdisplay)
+        layout.addWidget(self.keyfile)
+        layout.addWidget(self.inputkey)
+        layout.addWidget(self.inputn)
+        layout.addWidget(self.keydisplay)
+        layout.addWidget(self.separate)
+        layout.addWidget(self.signing)
+        
+
 
     def check_state(self):
         if self.separate2.isChecked():
