@@ -40,11 +40,17 @@ def verify_function_satu(inputfile, key, n, inputsign=None):
         with open(inputsign, 'r') as signature:
             sign = signature.read()
         b = sign.find(ending_text)
-        hexcode = sign[len(opening_text), b]
+        if (b== 0):
+            output = "file has been changed!"
+            return output
+        hexcode = sign[a+len(opening_text):b]
+        if (len(hexcode)<5):
+            output = "file has been changed!"
+            return output
         hexsign = int(hexcode, 16)
         with open(inputfile, 'r') as f:
             msg = f.read()
-        new_hash = int(hashlib.sha1(msg).hexdigest(), 16)
+        new_hash = int(hashlib.sha1(msg.encode()).hexdigest(), 16)
     else :
         a = msg.find(opening_text)
         b = msg.find(ending_text)
@@ -53,13 +59,18 @@ def verify_function_satu(inputfile, key, n, inputsign=None):
         # print ("len opening : ", len(opening_text))
         # print ("len ending : ", len(ending_text))
         # print ("len message : ", len(msg))
-
+        if (b== 0):
+            output = "file has been changed!"
+            return output
         #extract message + hash
         msgasli = msg[0:a].encode()
         new_hash = int(hashlib.sha1(msgasli).hexdigest(), 16)
 
         #extract sign
         hexcode = msg[a+len(opening_text):b]
+        if (len(hexcode)<5):
+            output = "file has been changed!"
+            return output
         hexsign = int(hexcode, 16)
     # print("hexsign : ", hexsign)
     # print ("hexcode: ",hexcode)
