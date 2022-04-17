@@ -187,7 +187,6 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.labelinput2)
         layout.addWidget(self.chooseinputfile2)
         layout.addWidget(self.inputdisplay2)
-        # layout.addWidget(self.inputfield2)
         layout.addWidget(self.separate2)
         layout.addWidget(self.labelsign)
         layout.addWidget(self.choosesignfile)
@@ -197,7 +196,6 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.inputn2)
         layout.addWidget(self.keydisplay2)
         layout.addWidget(self.verif)
-        # layout.addWidget(self.verification)
 
         self.stackverify.setLayout(layout)
 
@@ -211,17 +209,25 @@ class MainWindow(QMainWindow):
         elif index == 2:
             self.stack.setCurrentIndex(2)
         
-        layout.addWidget(self.labelinput)
-        layout.addWidget(self.chooseinputfile)
-        layout.addWidget(self.inputdisplay)
-        layout.addWidget(self.keyfile)
-        layout.addWidget(self.inputkey)
-        layout.addWidget(self.inputn)
-        layout.addWidget(self.keydisplay)
-        layout.addWidget(self.separate)
-        layout.addWidget(self.signing)
-        
+        self.genkey.setText("Generate Key")
+        self.genkey.setStyleSheet("background-color: #023047;\n"
+                                    "color: white")
 
+        self.inputdisplay.clear()
+        self.inputkey.clear()
+        self.inputn.clear()
+        self.keydisplay.clear()
+        self.signing.setText("Sign File")
+        self.signing.setStyleSheet("background-color: #FCE205;\n"
+                                    "color: black")
+        self.inputdisplay2.clear()
+        self.signdisplay.clear()
+        self.inputkey2.clear()
+        self.inputn2.clear()
+        self.keydisplay2.clear()
+        self.verif.setText("Verify File")
+        self.verif.setStyleSheet("background-color: #FCE205;\n"
+                                    "color: black")
 
     def check_state(self):
         if self.separate2.isChecked():
@@ -251,6 +257,7 @@ class MainWindow(QMainWindow):
             result = verify_function(self.inputfield2.toPlainText(), self.inputkey2.toPlainText(), self.inputn2.toPlainText(), self.inputsign.toPlainText())
         else:
             result = verify_function(self.inputfield2.toPlainText(), self.inputkey2.toPlainText(), self.inputn2.toPlainText())
+        self.verif.setText("Verification done!")
         self.verification.setText(result)
         self.verification.exec_()
         
