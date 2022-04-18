@@ -42,11 +42,11 @@ def verify_function(inputfile, key, n, inputsign=None):
         a = sign.find(opening_text)
         b = sign.find(ending_text)
         if (b== 0):
-            output = "file has been changed!"
+            output = "Sign not found!"
             return output
         hexcode = sign[a+len(opening_text):b]
         if (len(hexcode)<5):
-            output = "file has been changed!"
+            output = "Sign not found!"
             return output
         hexsign = int(hexcode, 16)
         with open(inputfile, 'r') as f:
@@ -63,7 +63,7 @@ def verify_function(inputfile, key, n, inputsign=None):
         # print ("len ending : ", len(ending_text))
         # print ("len message : ", len(msg))
         if (b== 0):
-            output = "file has been changed!"
+            output = "Sign not found!"
             return output
         #extract message + hash
         msgasli = msg[0:a-1].encode()
@@ -73,7 +73,7 @@ def verify_function(inputfile, key, n, inputsign=None):
         #extract sign
         hexcode = msg[a+len(opening_text):b]
         if (len(hexcode)<5):
-            output = "file has been changed!"
+            output = "Sign not found!"
             return output
         hexsign = int(hexcode, 16)
     print("hexsign : ", hexsign)
